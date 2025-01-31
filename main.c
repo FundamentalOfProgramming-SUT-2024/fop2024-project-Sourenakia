@@ -346,7 +346,7 @@ int Rahoroh_right(int a, int b, int c, int d, int e){
     }
 }
 
-int Rahroh_left(int a, int b, int c, int d, int e){
+int Rahroh_left(int a, int b, int c, int d, int e, int f, int g){
     int m1, n1, m2, n2, p1 = 0, p2 = 0;
     for(int j = a; j < b; j++){
         for(int i = c; i < d; i++){
@@ -358,7 +358,7 @@ int Rahroh_left(int a, int b, int c, int d, int e){
         }
     }
     for(int j = b + 1; j < e; j++){
-        for(int i = c; i < d; i++){
+        for(int i = f; i < g; i++){
             if(pixel[j][i].location == 'U'){
                 m2 = j;
                 n2 = i;
@@ -371,7 +371,7 @@ int Rahroh_left(int a, int b, int c, int d, int e){
     }
     else if(p1 == 1){
         for(int j = b + 1; j < e; j++){
-            for(int i = c; i < d; i++){
+            for(int i = f; i < g; i++){
                 if(pixel[j][i].location == 'L'){
                     m2 = j;
                     n2 = i;
@@ -383,7 +383,7 @@ int Rahroh_left(int a, int b, int c, int d, int e){
     }
 }
 
-int Rahroh_down(int a, int b, int c, int d, int e){
+int Rahroh_down(int a, int b, int c, int d, int e, int f, int g){
     int m1, n1, m2, n2, p1 = 0, p2 = 0;
     for(int j = a; j < b; j++){
         for(int i = c; i < d; i++){
@@ -395,7 +395,7 @@ int Rahroh_down(int a, int b, int c, int d, int e){
         }
     }
     for(int j = b + 1; j < e; j++){
-        for(int i = c; i < d; i++){
+        for(int i = f; i < g; i++){
             if(pixel[j][i].location == 'U'){
                 m2 = j;
                 n2 = i;
@@ -408,7 +408,7 @@ int Rahroh_down(int a, int b, int c, int d, int e){
     }
     else if(p1 == 1){
         for(int j = b + 1; j < e; j++){
-            for(int i = c; i < d; i++){
+            for(int i = f; i < g; i++){
                 if(pixel[j][i].location == 'L'){
                     m2 = j;
                     n2 = i;
@@ -419,16 +419,14 @@ int Rahroh_down(int a, int b, int c, int d, int e){
         Masir_1(m1, n1, m2, n2);
     }
     else{
-        Rahroh_left(a, b, c, d, e);
+        Rahroh_left(a, b, c, d, e, f, g);
     }
 }
 
 int Main_game(){
     srand(time(0));
-    int tedad = Random_number(11, 15);
-    tedad = 12;
-    /*/
-    if(tedad == 11){
+    int tedad = Random_number(11, 18);
+    if(tedad == 11 || tedad == 13){
         Table_show(4, 36, 4, 12);
         Table_show(38, 74, 4, 12);
         Table_show(76, 112, 4, 12);
@@ -440,28 +438,20 @@ int Main_game(){
         Table_show(38, 74, 25, 32);
         Table_show(76, 112, 25, 32);
         Table_show(114, 148, 25, 32);
-        int m1, m2, n1, n2;
-        for(int j = 4; j < 13; j++){
-            for(int i = 4; i < 37; i++){
-                if(pixel[j][i].flag == 5){
-                    m1 = i;
-                    n1 = j;
-                }
-            }
-        }
-        for(int j = 4; j < 13; j++){
-            for(int i = 38; i < 75; i++){
-                if(pixel[j][i].flag == 5){
-                    m2 = i;
-                    n2 = j;
-                }
-            }
-        }
-        Masir(n1, m1, n2, m2);
-        //mvprintw(10, 50, "%d %d %d %d", n1, n2, m1, m2);
+        Rahoroh_right(4, 13, 4, 37, 75);
+        Rahoroh_right(4, 13, 38, 75, 113);
+        Rahoroh_right(4, 13, 76, 113, 148);
+        Rahoroh_right(25, 33, 4, 37, 75);
+        Rahoroh_right(25, 33, 38, 75, 113);
+        Rahoroh_right(25, 33, 76, 113, 148);
+        Rahroh_down(4, 13, 4, 37, 24, 4, 50);
+        Rahroh_down(14, 24, 4, 50, 33, 4, 37);
+        Rahroh_down(4, 13, 38, 75, 24, 51, 103);
+        Rahroh_down(14, 24, 51, 103, 33, 38, 75);
+        Rahroh_down(4, 13, 76, 113, 24, 102, 149);
+        Rahroh_down(14, 24, 102, 149, 33, 114, 148);
     }
-    */
-    if(tedad == 12){
+    else if(tedad == 12 || tedad == 14){
         Table_show(4, 36, 4, 12);
         Table_show(38, 74, 4, 12);
         Table_show(76, 112, 4, 12);
@@ -483,14 +473,100 @@ int Main_game(){
         Rahoroh_right(25, 33, 4, 37, 75);
         Rahoroh_right(25, 33, 38, 75, 113);
         Rahoroh_right(25, 33, 76, 113, 148);
-        Rahroh_down(4, 13, 4, 37, 24);
-        Rahroh_down(14, 24, 4, 37, 33);
-        Rahroh_down(4, 13, 38, 75, 24);
-        Rahroh_down(14, 24, 38, 75, 33);
-        Rahroh_down(4, 13, 76, 113, 24);
-        Rahroh_down(14, 24, 76, 113, 33);
-        Rahroh_down(4, 13, 114, 149, 24);
-        Rahroh_down(14, 24, 114, 149, 33);
+        Rahroh_down(4, 13, 4, 37, 24, 4, 37);
+        Rahroh_down(14, 24, 4, 37, 33, 4, 37);
+        Rahroh_down(4, 13, 38, 75, 24, 38, 75);
+        Rahroh_down(14, 24, 38, 75, 33, 38, 75);
+        Rahroh_down(4, 13, 76, 113, 24, 76, 113);
+        Rahroh_down(14, 24, 76, 113, 33, 76, 113);
+        Rahroh_down(4, 13, 114, 149, 24, 114, 149);
+        Rahroh_down(14, 24, 114, 149, 33, 114, 149);
+    }
+    else if(tedad == 15 || tedad == 16){
+        Table_show(4, 28, 4, 12);
+        Table_show(30, 58, 4, 12);
+        Table_show(60, 88, 4, 12);
+        Table_show(90, 118, 4, 12);
+        Table_show(120, 148, 4, 12);
+        Table_show(4, 28, 14, 23);
+        Table_show(30, 58, 14, 23);
+        Table_show(60, 88, 14, 23);
+        Table_show(90, 118, 14, 23);
+        Table_show(120, 148, 14, 23);
+        Table_show(4, 28, 25, 32);
+        Table_show(30, 58, 25, 32);
+        Table_show(60, 88, 25, 32);
+        Table_show(90, 118, 25, 32);
+        Table_show(120, 148, 25, 32);
+        Rahoroh_right(4, 13, 4, 29, 59);
+        Rahoroh_right(4, 13, 30, 59, 89);
+        Rahoroh_right(4, 13, 60, 89, 119);
+        Rahoroh_right(4, 13, 90, 119, 149);
+        Rahoroh_right(14, 24, 4, 29, 59);
+        Rahoroh_right(14, 24, 30, 59, 89);
+        Rahoroh_right(14, 24, 60, 89, 119);
+        Rahoroh_right(14, 24, 90, 119, 149);
+        Rahoroh_right(24, 33, 4, 29, 59);
+        Rahoroh_right(24, 33, 30, 59, 89);
+        Rahoroh_right(24, 33, 60, 89, 119);
+        Rahoroh_right(24, 33, 90, 119, 149);
+        Rahroh_down(4, 13, 4, 30, 24, 4, 30);
+        Rahroh_down(14, 24, 4, 30, 33, 4, 30);
+        Rahroh_down(4, 13, 30, 60, 24, 30, 60);
+        Rahroh_down(14, 24, 30, 60, 33, 30, 60);
+        Rahroh_down(4, 13, 60, 90, 24, 60, 90);
+        Rahroh_down(14, 24, 60, 90, 33, 60, 90);
+        Rahroh_down(4, 13, 90, 120, 24, 90, 120);
+        Rahroh_down(14, 24, 90, 120, 33, 90, 120);
+        Rahroh_down(4, 13, 120, 150, 24, 120, 150);
+        Rahroh_down(14, 24, 120, 150, 33, 120, 150);
+    }
+    else if(tedad == 18 || tedad == 17){
+        Table_show(4, 26, 4, 12);
+        Table_show(28, 49, 4, 12);
+        Table_show(51, 73, 4, 12);
+        Table_show(75, 98, 4, 12);
+        Table_show(100, 122, 4, 12);
+        Table_show(124, 148, 4, 12);
+        Table_show(4, 26, 14, 23);
+        Table_show(28, 49, 14, 23);
+        Table_show(51, 73, 14, 23);
+        Table_show(75, 98, 14, 23);
+        Table_show(100, 122, 14, 23);
+        Table_show(124, 148, 14, 23);
+        Table_show(4, 26, 25, 32);
+        Table_show(28, 49, 25, 32);
+        Table_show(51, 73, 25, 32);
+        Table_show(75, 98, 25, 32);
+        Table_show(100, 122, 25, 32);
+        Table_show(124, 148, 25, 32);        
+        Rahoroh_right(4, 13, 4, 27, 50);
+        Rahoroh_right(4, 13, 28, 50, 74);
+        Rahoroh_right(4, 13, 51, 74, 99);
+        Rahoroh_right(4, 13, 75, 99, 123);
+        Rahoroh_right(4, 13, 100, 123, 149);
+        Rahoroh_right(14, 24, 4, 27, 50);
+        Rahoroh_right(14, 24, 28, 50, 74);
+        Rahoroh_right(14, 24, 51, 74, 99);
+        Rahoroh_right(14, 24, 75, 99, 123);
+        Rahoroh_right(14, 24, 100, 123, 149);
+        Rahoroh_right(25, 33, 4, 27, 50);
+        Rahoroh_right(25, 33, 28, 50, 74);
+        Rahoroh_right(25, 33, 51, 74, 99);
+        Rahoroh_right(25, 33, 75, 99, 123);
+        Rahoroh_right(25, 33, 100, 123, 149);
+        Rahroh_down(4, 13, 4, 27, 24, 4, 27);
+        Rahroh_down(14, 24, 4, 27, 33, 4, 27);
+        Rahroh_down(4, 13, 28, 50, 24, 28, 50);
+        Rahroh_down(14, 24, 28, 50, 33, 28, 50);
+        Rahroh_down(4, 13, 51, 74, 24, 51, 74);
+        Rahroh_down(14, 24, 51, 74, 33, 51, 74);
+        Rahroh_down(4, 13, 75, 99, 24, 75, 99);
+        Rahroh_down(14, 24, 75, 99, 33, 75, 99);
+        Rahroh_down(4, 13, 100, 123, 24, 100, 123);
+        Rahroh_down(14, 24, 100, 123, 33, 100, 123);
+        Rahroh_down(4, 13, 124, 148, 24, 124, 148);
+        Rahroh_down(14, 24, 124, 148, 33, 124, 148);
     }
     update_screen();
     getch();
