@@ -789,13 +789,13 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
 }
 
 int Main_game(int k){
-    int i,j,l;
+  /*  int i,j,l;
     for (l=0; l<=k; ++l)
       for (j=0; j<38; ++j)
         for (i=0 ; i<153; ++i){
            cell.pixel[l][j][i].font = ' ';
            cell.pixel[l][j][i].flag = 0;
-        }
+        }*/
     srand(time(0));
     int tedad = Random_number(11, 18);
     if(tedad == 11 || tedad == 13){
@@ -1049,8 +1049,6 @@ int Check_password(){
         }
         fclose(fptr);
     }while(p);
-
-   // update_screen(0);
     
     getch();
     return p;
@@ -1089,7 +1087,6 @@ int New_user(){
                 mvprintw(32, 54, "WARNING!!! The username you enterd is already taken!");
                 attroff(COLOR_PAIR(2));
                 p=0;
-                fclose(fptr);
               //  break;
             } 
             else{ 
@@ -1221,19 +1218,8 @@ int New_user(){
             break;
         }
     }while(true);
-  //  fptr = (fopen("usersinfo.dat","ab+"));
-    int count = 0;
-    fptr = (fopen("usersinfo.dat","rb+"));
- 
-    fread(&cell, sizeof(cell), 1, fptr);
-    while(!feof(fptr)){
-       count = count + 1;
-       fread(&cell, sizeof(cell), 1, fptr);
-     }
-    count = count - 1; 
-    fseek(fptr,(count * sizeof(cell)), SEEK_SET);
-    fwrite(&temp,sizeof(cell), 1,fptr);
-
+    fptr = (fopen("usersinfo.dat","ab+"));
+    fwrite(&temp, sizeof(cell), 1, fptr);
     fclose(fptr);
     getch();
     return 1;
@@ -1302,12 +1288,10 @@ int Login(){
         } 
         else{ 
             fread(&temp, sizeof(cell), 1, fptr);
-            p = p + 1;
+            ++p;
         }
     }
     //--p;
-    fclose(fptr);
-    fptr = (fopen("usersinfo.dat","rb+"));
     fseek(fptr,(p * sizeof(cell)), SEEK_SET);
     fwrite(&cell,sizeof(cell), 1,fptr);
 
@@ -1331,7 +1315,7 @@ int Login(){
             mvprintw(11, 50, "                                                                  ");
             attron(COLOR_PAIR(3));
             //mvscanw(11,50, "%s", tempi.name);
-         char tempchar[40];
+   */       char tempchar[40];
             strcpy(tempchar,cell.name);
             int b = 1;
             int p = 0;
@@ -1340,18 +1324,34 @@ int Login(){
             fread(&cell, sizeof(cell), 1, fptr);
             while(!feof(fptr) && b){
                 if (!strcmp(cell.name,tempchar)){
+          //          mvprintw(10,100,"%s",cell.name);
                     b = 0;
+                 //   break;
                 }               
                 else{     
+        //            mvprintw(25,100,"%s",cell.name);
+                    ++p;
                     fread(&cell, sizeof(cell), 1, fptr);
                 }
-            }  */  
-           update_screen(0);
+            }
+          //  --p;
+            fseek(fptr,(p * sizeof(cell)), SEEK_SET);
+            fread(&cell,sizeof(cell),1,fptr);
+        //    update_screen(0);
             
-        //       for (int j=0; j < 38; ++j)
-          //         for(int i=0; i<153; ++i)
-            //            mvprintw(j , i ,"%c",cell.pixel[0][j][i].font);
+               for (int j=0; j < 38; ++j)
+                   for(int i=0; i<153; ++i)
+                        mvprintw(j , i ,"%c",cell.pixel[0][j][i].font);
       
+       // }
+   /**/
+     //       for(int j = 0; j < 38; j++){
+       //         for(int i = 0; i < 153; i++){
+                    //cell.pixel[0][j][i].font = 'a';
+                    //mvprintw(j, i, "%c", cell.pixel[0][j][i].font);
+              //  }
+      //      }
+            //mvprintw(10, 10, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
         
         getch();
     //}
