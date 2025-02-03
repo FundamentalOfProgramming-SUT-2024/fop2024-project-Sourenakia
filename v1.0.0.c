@@ -137,6 +137,7 @@ int Rahroh_mahdood(int y, int x, int k){
                         if(sehat(y, x, j, i, k)){
                             mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
                             move(37, 152);
+                            cell.pixel[k][j][i].namayesh = 1;
                         }
                     }
                 }
@@ -310,9 +311,11 @@ int key(int y, int x, char c, int k){
             //cell.pixel[k][y][x].namayesh = 1;
         }
     }
+    
+    
 //-------------------------------------------------------------------------------------- 
     
-    else if (c == 27) {
+    if (c == 27) {
         
     return 1;
    }
@@ -406,6 +409,9 @@ int key(int y, int x, char c, int k){
             //f = getch();
         }
     }
+    
+    move(37, 152);
+    Rahroh_mahdood(y, x, k);
     if(c == 'M'){
         M++;
         if(M % 2){
@@ -421,10 +427,8 @@ int key(int y, int x, char c, int k){
                 }
             }
         }
+        mahdood_room(y, x, k);
     }
-    mahdood_room(y, x, k);
-    move(37, 152);
-    Rahroh_mahdood(y, x, k);
     c = getch();
     move(37, 152);
     if(cell.pixel[k][y][x].previous == '^'){
