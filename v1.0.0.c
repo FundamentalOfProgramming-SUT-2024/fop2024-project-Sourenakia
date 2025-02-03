@@ -26,6 +26,7 @@ typedef struct{
 
 pix cell;
 int M = 0;
+int testkey = 0;
 
 int Login();
 int thealthy = 0, tspeed = 0, tdamage = 0;
@@ -315,7 +316,8 @@ int key(int y, int x, char c, int k){
     
 //-------------------------------------------------------------------------------------- 
     
-    if (c == 27) {
+    
+    else if(c == 27) {
         
     return 1;
    }
@@ -966,13 +968,16 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
 }
 
 int Main_game(int k){
-  /*  int i,j,l;
-    for (l=0; l<=k; ++l)
-      for (j=0; j<38; ++j)
-        for (i=0 ; i<153; ++i){
-           cell.pixel[l][j][i].font = ' ';
-           cell.pixel[l][j][i].flag = 0;
-        }*/
+    for (int j = 0; j < 38; ++j)
+      for(int i = 0; i < 153; ++i){
+          cell.pixel[0][j][i].font = ' ';
+          cell.pixel[0][j][i].check = 0;
+          cell.pixel[0][j][i].flag = 0;
+          cell.pixel[0][j][i].location = ' ';
+          cell.pixel[0][j][i].namayesh = 0;
+          cell.pixel[0][j][i].previous = ' ';
+      }
+
     srand(time(0));
     int tedad = Random_number(11, 18);
     if(tedad == 11 || tedad == 13){
@@ -1170,7 +1175,27 @@ int Main_game(int k){
     char c = getch();
     
     key(m , n, c, k);
-
+            FILE *fptr;
+            pix temp;
+            int pp = 0;
+            int bb = 1;
+            fptr = (fopen("usersinfo.dat","rb"));
+            fread(&temp, sizeof(pix), 1, fptr);
+            while(!feof(fptr) &&  bb){
+                if(!strcmp(temp.name, cell.name)){
+                    bb = 0;;
+                } 
+                else{ 
+                    fread(&temp, sizeof(pix), 1, fptr);
+                    pp = pp + 1;
+                    }
+            }
+            fclose(fptr);
+            fptr = (fopen("usersinfo.dat","rb+"));
+            fseek(fptr,(pp * sizeof(pix)), SEEK_SET);
+            fwrite(&cell,sizeof(pix), 1,fptr);
+            fclose(fptr); 
+  
     
 }
 
@@ -1266,18 +1291,18 @@ int New_user(){
         fptr = (fopen("usersinfo.dat","rb+"));
         mvprintw(11, 50, "                                                                  ");
         attron(COLOR_PAIR(3));
-        mvscanw(11,50, "%s", temp.name);
-        fread(&cell, sizeof(cell), 1, fptr);
+        mvscanw(11,50, "%s", cell.name);
+        fread(&temp, sizeof(temp), 1, fptr);
         while(!feof(fptr) && p){
             if(!strcmp(temp.name, cell.name)){
                 attron(COLOR_PAIR(2));
                 mvprintw(32, 54, "WARNING!!! The username you enterd is already taken!");
                 attroff(COLOR_PAIR(2));
                 p=0;
-              //  break;
+              
             } 
             else{ 
-               fread(&cell, sizeof(cell), 1, fptr);
+               fread(&temp, sizeof(temp), 1, fptr);
             }
         }
     }while(!p);
@@ -1285,7 +1310,7 @@ int New_user(){
     
     mvprintw(32, 54, "                                                                  ");
     attron(COLOR_PAIR(4));
-    mvprintw(32, 54, "Hello %s!!!", temp.name);
+    mvprintw(32, 54, "Hello %s!!!", cell.name);
     attroff(COLOR_PAIR(4));
     attron(COLOR_PAIR(3));
     mvprintw(33, 54, "Press R to return to the previous page");
@@ -1296,9 +1321,9 @@ int New_user(){
         mvprintw(13, 50, "please enter your password:");
         attroff(COLOR_PAIR(1));
         attron(COLOR_PAIR(3));
-        mvscanw(14, 50, "%s", temp.password);
+        mvscanw(14, 50, "%s", cell.password);
         attroff(COLOR_PAIR(3));
-        if(strlen(temp.password) < 8){
+        if(strlen(cell.password) < 8){
             mvprintw(32, 54, "                                                                  ");
             mvprintw(33, 54, "                                                                  ");
             attron(COLOR_PAIR(2));
@@ -1312,14 +1337,14 @@ int New_user(){
     }while(p);
     do{
         int b = 0, k = 0, a = 0;
-        for(int i = 0; i < strlen(temp.password); i++){
-            if(temp.password[i] >= 'A' && temp.password[i] <= 'Z'){
+        for(int i = 0; i < strlen(cell.password); i++){
+            if(cell.password[i] >= 'A' && cell.password[i] <= 'Z'){
                 b++;
             }
-            if(temp.password[i] >= 'a' && temp.password[i] <= 'z'){
+            if(cell.password[i] >= 'a' && cell.password[i] <= 'z'){
                 k++;
             }
-            if(temp.password[i] >= '0' && temp.password[i] <= '9'){
+            if(cell.password[i] >= '0' && cell.password[i] <= '9'){
                 a++;
             }
         }
@@ -1351,7 +1376,7 @@ int New_user(){
             attroff(COLOR_PAIR(2));
         }
         attron(COLOR_PAIR(3));
-        mvscanw(14, 50, "%s", temp.password);
+        mvscanw(14, 50, "%s", cell.password);
         attroff(COLOR_PAIR(3));
         mvprintw(30, 50, "                                                                                     ");
         mvprintw(31, 50, "                                                                                     ");
@@ -1363,24 +1388,24 @@ int New_user(){
     do{
         int a = 0, d = 0, m;
         attron(COLOR_PAIR(3));
-        mvscanw(17, 50, "%s", temp.email);
+        mvscanw(17, 50, "%s", cell.email);
         attroff(COLOR_PAIR(3));
         mvprintw(17, 50, "                                                                                     ");
         mvprintw(30, 50, "                                                                                     ");
         mvprintw(31, 50, "                                                                                     ");
         mvprintw(32, 50, "                                                                                     ");
-        if(temp.email[strlen(temp.email) - 4] != '.'){
+        if(cell.email[strlen(cell.email) - 4] != '.'){
             attron(COLOR_PAIR(2));
             mvprintw(32, 50, "WARNING!!! Invalid email!");
             attroff(COLOR_PAIR(2));
             continue;
         }
-        for(int i = 0; i < strlen(temp.email); i++){
-            if(temp.email[i] == '@'){
+        for(int i = 0; i < strlen(cell.email); i++){
+            if(cell.email[i] == '@'){
                 a++;
                 m = i;
             }
-            if(temp.email[i] == '.'){
+            if(cell.email[i] == '.'){
                 d++;
             }
         }
@@ -1391,7 +1416,7 @@ int New_user(){
             continue;
         }
         
-        if(m < 3 || temp.email[m + 1] == '.'){
+        if(m < 3 || cell.email[m + 1] == '.'){
             attron(COLOR_PAIR(2));
             mvprintw(32, 50, "WARNING!!! Invalid email!");
             attroff(COLOR_PAIR(2));
@@ -1406,7 +1431,7 @@ int New_user(){
         }
     }while(true);
     fptr = (fopen("usersinfo.dat","ab+"));
-    fwrite(&temp, sizeof(cell), 1, fptr);
+    fwrite(&cell, sizeof(cell), 1, fptr);
     fclose(fptr);
     getch();
     return 1;
@@ -1464,6 +1489,7 @@ int Settings(){
 }
 //----------------------------------------------------------------------------------------------------------
 int Login(){
+   
     clear();
     attron(COLOR_PAIR(2));
     mvprintw(5, 54, "R O G U E    G A M E");
@@ -1505,132 +1531,24 @@ int Login(){
 
 
 
-
     if(number == 1){
-        //if(Check_password() == 1){
-          //  Main_game(0);
-        //}
-    Main_game(0);
-    
-    pix temp;
-    int p = 0;
-    int b = 1;
-    FILE *fptr;
-    fptr = (fopen("usersinfo.dat","rb+"));
-    fread(&temp, sizeof(cell), 1, fptr);
-    while(!feof(fptr) && b){
-        if(!strcmp(temp.name, cell.name)){
-            b = 0;
-        } 
-        else{ 
-            fread(&temp, sizeof(cell), 1, fptr);
-            ++p;
-        }
-    }
-    //--p;
-    fseek(fptr,(p * sizeof(cell)), SEEK_SET);
-    fwrite(&cell,sizeof(cell), 1,fptr);
-
-    fclose(fptr); 
+     
+     Main_game(0);
     
     }
-
-
-
-
-
-
-
 
     else if(number == 2){
 
-        //Check_password();
-        
-        //if(Check_password() == 1){
- /*
-            mvprintw(11, 50, "                                                                  ");
-            attron(COLOR_PAIR(3));
-            //mvscanw(11,50, "%s", tempi.name);
-   */       char tempchar[40];
-            strcpy(tempchar,cell.name);
-            int b = 1;
-            int p = 0;
-            FILE *fptr;
-            fptr = (fopen("usersinfo.dat","rb"));
-            fread(&cell, sizeof(cell), 1, fptr);
-            while(!feof(fptr) && b){
-                if (!strcmp(cell.name,tempchar)){
-          //          mvprintw(10,100,"%s",cell.name);
-                    b = 0;
-                 //   break;
-                }               
-                else{     
-        //            mvprintw(25,100,"%s",cell.name);
-                    ++p;
-                    fread(&cell, sizeof(cell), 1, fptr);
-                }
-            }
-          //  --p;
-            fseek(fptr,(p * sizeof(cell)), SEEK_SET);
-            fread(&cell,sizeof(cell),1,fptr);
-        //    update_screen(0);
-            
-               for (int j=0; j < 38; ++j)
+                for (int j=0; j < 38; ++j)
+                   for(int i=0; i<153; ++i)
+                        mvprintw(j , i ," ");
+      
+
+                for (int j=0; j < 38; ++j)
                    for(int i=0; i<153; ++i)
                         mvprintw(j , i ,"%c",cell.pixel[0][j][i].font);
       
-       // }
-   /**/
-     //       for(int j = 0; j < 38; j++){
-       //         for(int i = 0; i < 153; i++){
-                    //cell.pixel[0][j][i].font = 'a';
-                    //mvprintw(j, i, "%c", cell.pixel[0][j][i].font);
-              //  }
-      //      }
-            //mvprintw(10, 10, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-        
-        getch();
-    //}
-        /*/
-         int k = 0;
-           int m, n;
-            for(int j = 0; j < 38; j++){
-                for(int i = 0; i < 153; i++){
-                    if(cell.pixel[k][j][i].font == '@'){
-                        m = j;
-                        n = i;
-                        break;
-                    }
-                }
-            }
-            update_screen(k);
-            mvprintw(m,n,"@");
-            char c = getch();
-       key(m, n, c, k);
-    //----------------------------------------- Writing... ----------------------------------------
-/*
-    FILE *fptr;
-    pix temp;
-    int p = 0;
-
-    fptr = (fopen("usersinfo.dat","rb+"));
-    fread(&temp, sizeof(cell), 1, fptr);
-    while(!feof(fptr)){
-        if(!strcmp(temp.name, cell.name)){
-            break;
-        } 
-        else{ 
-            fread(&temp, sizeof(cell), 1, fptr);
-            ++p;
-        }
-    }
-    fseek(fptr,(p * sizeof(cell)), SEEK_SET);
-    fwrite(&cell,sizeof(cell), 1,fptr);
-    fclose(fptr); 
-        }
-    }
-
-*/
+   
     }
     else if(number == 3){
 
@@ -1646,7 +1564,7 @@ int Login(){
     }
     clear();
 }
-
+//----------------------------------------------------------------------------------------
 int main(){
     int k = 0;
     FILE *fptr;
@@ -1711,13 +1629,15 @@ int main(){
         if(number == 1){
             if (New_user() == 1){
                 Login();
+
+   
             }
         }
         else if(number == 2){
             int p = Check_password();
-            //update_screen(0);
-            //getch();
+
             int a = Login();
+
             if(a == 6){
                 refresh();
                 endwin();
@@ -1729,7 +1649,10 @@ int main(){
             }
         }
         else if(number == 3){
+            testkey = 1;
             Main_game(0);
+            testkey = 0;
+ 
         }
         else if(number == 4){
             refresh();
