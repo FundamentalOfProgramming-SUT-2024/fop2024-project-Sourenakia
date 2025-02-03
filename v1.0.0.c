@@ -10,6 +10,7 @@ typedef struct{
 	int color;
 	char font, location, previous;
     int flag;
+    int check;
 }mainpixel;
 
 
@@ -52,34 +53,35 @@ void update_screen(int k){
 }
 //------------------------------------------show----------------------------------------
 int mahdood_room(int y, int x, int k){
-    int m1, n1, m2, n2;
+    int m1 = y, n1 = x, m2 = y, n2 = x;
     for(int j = y; j < 37; j++){
-        if(cell.pixel[k][j][x].font == '-' || cell.pixel[k][j][x].font == '+'){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
             m2 = j;
             break;
         }
     }
     for(int j = y; j > 0; j--){
-        if(cell.pixel[k][j][x].font == '-' || cell.pixel[k][j][x].font == '+'){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
             m1 = j;
             break;
         }
     }
     for(int i = x; i < 153; i++){
-        if(cell.pixel[k][y][i].font == '|' || cell.pixel[k][y][i].font == '+'){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
             n2 = i;
             break;
         }
     }
     for(int i = x; i > 0; i--){
-        if(cell.pixel[k][y][i].font == '|' || cell.pixel[k][y][i].font == '+'){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
             n1 = i;
             break;
         }
     }
-    for(int i = n1; i <= n2; i++){
-        for(int j = m1; j <= m2; j++){
-            mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+    for(int j = m1 - 1; j <= m2 + 1; j++){
+        for(int i = n1 - 1; i <= n2 + 1; i++){
+            if(cell.pixel[k][j][i].previous != '#' && cell.pixel[k][j][i].previous != '^')
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
         }
     }
     move(37, 152);
@@ -92,15 +94,19 @@ int key(int y, int x, char c, int k){
     noecho();
     mvprintw(1, 1, "                                                                         ");
     move(37, 152);
+   
     if(c == '1'){
         if (cell.pixel[k][y + 1][x - 1].flag != 0 && cell.pixel[k][y + 1][x - 1].font != '|' &&
             cell.pixel[k][y + 1][x - 1].font != '-' && cell.pixel[k][y + 1][x - 1].font != 'O'){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y + 1][x - 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-            //if(cell.pixel[k][y][x].font == '+'){
-              //  mahdood_room(y + 1, x - 1, k);
-            //}
+            if (cell.pixel[k][y + 1][x - 1].previous == '+' && cell.pixel[k][y + 1][x - 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y + 1][x - 1].check = 1;
+                    mahdood_room(y + 1, x - 2, k);
+                    mvprintw(1, 1, "New Room!");
+            }
             y = y + 1;
             x = x - 1;
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -112,9 +118,14 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y + 1][x].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-            //if(cell.pixel[k][y][x].font == '+'){
-              //  mahdood_room(y + 1, x, k);
-            //}
+            
+            if (cell.pixel[k][y + 1][x].previous == '+' && cell.pixel[k][y + 1][x].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y + 1][x].check = 1;
+                    mahdood_room(y + 2, x, k);
+                    mvprintw(1, 1, "New Room!");
+            }
+            
             y = y + 1;
             x = x;
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -126,9 +137,12 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y + 1][x + 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-            //if(cell.pixel[k][y][x].font == '+'){
-              //  mahdood_room(y + 1, x + 1, k);
-            //}
+            if (cell.pixel[k][y + 1][x + 1].previous == '+' && cell.pixel[k][y + 1][x + 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y + 1][x + 1].check = 1;
+                    mahdood_room(y + 1, x + 2, k);
+                    mvprintw(1, 1, "New Room!");
+            }
             y = y + 1;
             x = x + 1;
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -140,9 +154,12 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y][x - 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-            //if(cell.pixel[k][y][x].font == '+'){
-              //  mahdood_room(y, x - 1, k);
-            //}
+            if (cell.pixel[k][y][x - 1].previous == '+' && cell.pixel[k][y][x - 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y][x - 1].check = 1;
+                    mahdood_room(y, x - 2, k);
+                    mvprintw(1, 1, "New Room!");
+            }
             y = y;
             x = x - 1;
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -154,11 +171,13 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y][x + 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-            /*
-            if(cell.pixel[k][y][x].font == '+'){
-                mahdood_room(y, x + 1, k);
+            if (cell.pixel[k][y][x + 1].previous == '+' && cell.pixel[k][y][x + 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y][x + 1].check = 1;
+                    mahdood_room(y, x + 2, k);
+                    mvprintw(1, 1, "New Room!");
             }
-            */
+            
             y = y;
             x = x + 1;
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -170,11 +189,13 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y - 1][x - 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-            /*
-            if(cell.pixel[k][y][x].font == '+'){
-                mahdood_room(y - 1, x - 1, k);
+            
+            if (cell.pixel[k][y - 1][x - 1].previous == '+' && cell.pixel[k][y - 1][x - 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y - 1][x - 1].check = 1;
+                    mahdood_room(y - 1, x - 2, k);
+                    mvprintw(1, 1, "New Room!");
             }
-            */
             y = y - 1;
             x = x - 1;
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -186,11 +207,14 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y - 1][x].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-            /*
-            if(cell.pixel[k][y][x].font == '+'){
-                mahdood_room(y - 1, x, k);
+            
+            if (cell.pixel[k][y - 1][x].previous == '+' && cell.pixel[k][y - 1][x].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y - 1][x].check = 1;
+                    mahdood_room(y - 2, x, k);
+                    mvprintw(1, 1, "New Room!");
             }
-            */
+            
             y = y - 1;
             x = x;
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -202,11 +226,14 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y - 1][x + 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-            /*
-            if(cell.pixel[k][y][x].font == '+'){
-                mahdood_room(y - 1, x + 1, k);
+            
+            if (cell.pixel[k][y - 1][x + 1].previous == '+' && cell.pixel[k][y - 1][x + 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y - 1][x + 1].check = 1;
+                    mahdood_room(y - 1, x + 2, k);
+                    mvprintw(1, 1, "New Room!");
             }
-            */
+            
             y = y - 1;
             x = x + 1;
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -308,17 +335,8 @@ int key(int y, int x, char c, int k){
             //f = getch();
         }
     }
-    //mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-    //mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-    if (cell.pixel[k][y][x].previous == '+' && cell.pixel[k][y][x].previous == '#'){
-        mvprintw(1, 1, "New room!!!");
-    }
     move(37, 152);
-
-        /*/
-
- 
-    /*/   
+    
     c = getch();
     move(37, 152);
     if(cell.pixel[k][y][x].previous == '^'){
@@ -349,7 +367,6 @@ int key(int y, int x, char c, int k){
     }
     mvprintw(34, 10, "GOLD: %d", cell.gold);
     move(37, 152);
-    mahdood_room(y, x, k);
     key(y, x, c, k);
     return 1;
 }
@@ -1023,6 +1040,9 @@ int Main_game(int k){
     }
     for(int j = 0; j < 38; j++){
         for (int i = 0; i < 153; i++){
+            if(cell.pixel[k][j][i].font == '+'){
+                cell.pixel[k][j][i].check = 0;
+            }
             cell.pixel[k][j][i].previous = cell.pixel[k][j][i].font;
             if(cell.pixel[k][j][i].font == '#'){
                 cell.pixel[k][j][i].flag = 4;
