@@ -51,6 +51,8 @@ void update_screen(int k){
 	}
 }
 
+
+//test code!
 //-------------------------------------------KEY----------------------------------------
 
 int key(int y, int x, char c, int k){
