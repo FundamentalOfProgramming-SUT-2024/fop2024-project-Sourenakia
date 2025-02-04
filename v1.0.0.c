@@ -63,7 +63,7 @@ void update_screen(int k){
 	}
 }
 //------------------------------------------sehat---------------------------------------
-
+/*/
 int sehat(int y1, int x1, int y2, int x2, int k){
     if(y1 > y2){
         int temp = y2;
@@ -85,7 +85,7 @@ int sehat(int y1, int x1, int y2, int x2, int k){
     }
     return 1;
 }
-
+/*/
 //------------------------------------------show----------------------------------------
 
 int mahdood_room(int y, int x, int k){
@@ -114,14 +114,18 @@ int mahdood_room(int y, int x, int k){
             break;
         }
     }
-    for(int j = m1 - 1; j <= m2 + 1; j++){
-        for(int i = n1 - 1; i <= n2 + 1; i++){
-            if(cell.pixel[k][j][i].previous != '#' && cell.pixel[k][j][i].previous != '^'){
+    for(int j = m1; j <= m2; j++){
+        for(int i = n1; i <= n2; i++){
+            if(cell.pixel[k][j][i].previous != '#' && cell.pixel[k][j][i].font != '^'){
                 mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
                 cell.pixel[k][j][i].namayesh = 1;
                 if(cell.pixel[k][j][i].previous == '+'){
                     cell.pixel[k][j][i].check = 1;
                 }
+            }
+            if (cell.pixel[k][j][i].font == '^'){
+                mvprintw(j, i, ".");
+                cell.pixel[k][j][i].namayesh = 1;
             }
         }
     }
@@ -130,21 +134,39 @@ int mahdood_room(int y, int x, int k){
 
 //----------------------------------------------------rahroh--------------------------
 int Rahroh_mahdood(int y, int x, int k){
-    if(cell.pixel[k][y][x].previous == '#' || cell.pixel[k][y][x].previous == '+'){
-        for(int j = y - 5; j <= y + 5; j++){
-            for(int i = x - 5; i <= x + 5; i++){
-                if(cell.pixel[k][j][i].previous == '#' || cell.pixel[k][j][i].previous == '+'){
-                    if(ghadr(i + j, x + y) < 6){
-                        if(sehat(y, x, j, i, k)){
-                            mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
-                            move(37, 152);
-                            cell.pixel[k][j][i].namayesh = 1;
-                        }
-                    }
-                }
-            }
-        }
+    if(cell.pixel[k][y + 1][x].font == '+' || cell.pixel[k][y + 1][x].font == '#'){
+        mvprintw(y + 1, x, "%c", cell.pixel[k][y + 1][x].font);
+        cell.pixel[k][y + 1][x].namayesh = 1;
     }
+    if(cell.pixel[k][y + 1][x + 1].font == '+' || cell.pixel[k][y + 1][x + 1].font == '#'){
+        mvprintw(y + 1, x + 1, "%c", cell.pixel[k][y + 1][x + 1].font);
+        cell.pixel[k][y + 1][x + 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y + 1][x - 1].font == '+' || cell.pixel[k][y + 1][x - 1].font == '#'){
+        mvprintw(y + 1, x - 1, "%c", cell.pixel[k][y + 1][x - 1].font);
+        cell.pixel[k][y + 1][x - 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y - 1][x - 1].font == '+' || cell.pixel[k][y - 1][x - 1].font == '#'){
+        mvprintw(y - 1, x - 1, "%c", cell.pixel[k][y - 1][x - 1].font);
+        cell.pixel[k][y - 1][x - 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y - 1][x].font == '+' || cell.pixel[k][y - 1][x].font == '#'){
+        mvprintw(y - 1, x, "%c", cell.pixel[k][y - 1][x].font);
+        cell.pixel[k][y - 1][x].namayesh = 1;
+    }
+    if(cell.pixel[k][y - 1][x + 1].font == '+' || cell.pixel[k][y - 1][x + 1].font == '#'){
+        mvprintw(y - 1, x + 1, "%c", cell.pixel[k][y - 1][x + 1].font);
+        cell.pixel[k][y - 1][x + 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y][x + 1].font == '+' || cell.pixel[k][y][x + 1].font == '#'){
+        mvprintw(y, x + 1, "%c", cell.pixel[k][y][x + 1].font);
+        cell.pixel[k][y][x + 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y][x - 1].font == '+' || cell.pixel[k][y][x - 1].font == '#'){
+        mvprintw(y, x - 1, "%c", cell.pixel[k][y][x - 1].font);
+        cell.pixel[k][y][x - 1].namayesh = 1;
+    }
+    move(37, 152);
 }
 //-------------------------------------------KEY----------------------------------------
 
@@ -154,7 +176,6 @@ int key(int y, int x, char c, int k){
     mvprintw(1, 1, "                                                                         ");
     move(37, 152);
 
-    
 
     if(c == '1'){
         if (cell.pixel[k][y + 1][x - 1].flag != 0 && cell.pixel[k][y + 1][x - 1].font != '|' &&
@@ -413,10 +434,11 @@ int key(int y, int x, char c, int k){
     }
     
     move(37, 152);
-    Rahroh_mahdood(y, x, k);
+    int point = 1;
     if(c == 'M'){
         M++;
         if(M % 2){
+            point = 1;
             update_screen(k);
         }
         else{
@@ -425,13 +447,27 @@ int key(int y, int x, char c, int k){
                     mvprintw(j, i, " ");
                     if (cell.pixel[k][j][i].namayesh == 1){
                         mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                        mvprintw(j, i, "1");
+                        point = 0;
                     }
                 }
             }
         }
-        mahdood_room(y, x, k);
+        
     }
+    mahdood_room(y, x, k);
+    Rahroh_mahdood(y, x, k);
+    for(int j = 0; j < 38; j++){
+        for(int i = 0; i < 153; i++){
+            if(cell.pixel[k][j][i].namayesh == 0 && !point){
+                mvprintw(j, i, " ");
+            }
+        }
+    }
+
     c = getch();
+
+    
     move(37, 152);
     if(cell.pixel[k][y][x].previous == '^'){
         for(int i = 0; i < 38; i++){
