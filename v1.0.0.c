@@ -24,6 +24,8 @@ typedef struct{
     int gold;
 }pix;
 
+int Main_game(int k);
+
 pix cell;
 int M = 0;
 int testkey = 0;
@@ -433,6 +435,13 @@ int key(int y, int x, char c, int k){
         }
     }
     
+    if(cell.pixel[k][y][x].previous == '<'){
+        f = getch();
+        if(f == '5'){
+            Main_game(k + 1);
+        }
+    }
+
     move(37, 152);
     int point = 1;
     if(c == 'M'){
@@ -998,14 +1007,14 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
 int Main_game(int k){
     for (int j = 0; j < 38; ++j)
       for(int i = 0; i < 153; ++i){
-          cell.pixel[0][j][i].font = ' ';
-          cell.pixel[0][j][i].check = 0;
-          cell.pixel[0][j][i].flag = 0;
-          cell.pixel[0][j][i].location = ' ';
-          cell.pixel[0][j][i].namayesh = 0;
-          cell.pixel[0][j][i].previous = ' ';
+          cell.pixel[k][j][i].font = ' ';
+          cell.pixel[k][j][i].check = 0;
+          cell.pixel[k][j][i].flag = 0;
+          cell.pixel[k][j][i].location = ' ';
+          cell.pixel[k][j][i].namayesh = 0;
+          cell.pixel[k][j][i].previous = ' ';
       }
-
+    cell.floor = k;
     srand(time(0));
     int tedad = Random_number(11, 18);
     if(tedad == 11 || tedad == 13){
@@ -1194,6 +1203,54 @@ int Main_game(int k){
     mvprintw(m, n, "@");
     move(37, 152);
     noecho();
+    if(k < 4){
+        int m1 = m, n1 = n, m2 = m, n2 = n;
+        for(int j = m; j < 37; j++){
+            if(cell.pixel[k][j][n].previous == '-' || cell.pixel[k][j][n].previous == '+'){
+                m2 = j;
+                break;
+            }
+        }
+        for(int j = m; j > 0; j--){
+            if(cell.pixel[k][j][n].previous == '-' || cell.pixel[k][j][n].previous == '+'){
+                m1 = j;
+                break;
+            }
+        }
+        for(int i = n; i < 153; i++){
+            if(cell.pixel[k][m][i].previous == '|' || cell.pixel[k][m][i].previous == '+'){
+                n2 = i;
+                break;
+            }
+        }
+        for(int i = n; i > 0; i--){
+            if(cell.pixel[k][m][i].previous == '|' || cell.pixel[k][m][i].previous == '+'){
+                n1 = i;
+                break;
+            }
+        }
+        int randomx, randomy;
+        do
+        {
+            randomx = Random_number(0, 152);
+            randomy = Random_number(0, 37);
+            if (cell.pixel[k][randomy][randomx].font != '.'){
+                continue;
+            }
+            else{
+                if ((randomx < n2 && randomx > n1) && (randomy < m2 && randomy > m2)){
+                    continue;
+                }
+                else{
+                    break;
+                }
+            }
+        } while (true);
+        cell.pixel[k][randomy][randomx].font = '<';
+        cell.pixel[k][randomy][randomx].previous = '<';
+        cell.pixel[k][randomy][randomx].namayesh = 0;
+        cell.pixel[k][randomy][randomx].flag = 20;
+    }
     for(int j = 0; j < 38; j++){
         for(int i = 0; i < 153; i++){
             mvprintw(j, i, " ");
@@ -1512,6 +1569,19 @@ int Settings(){
     number++;
     attroff(COLOR_PAIR(4));
 }
+//-------------------------------------------------scoreboard----------------------------------------------
+
+int Scoreboard(){
+    clear();
+    attron(COLOR_PAIR(2));
+    mvprintw(5, 54, "R O G U E    G A M E");
+    attroff(COLOR_PAIR(2));
+    attron(COLOR_PAIR(4));
+    mvprintw(6, 58, "SCOREBOARD!!!");
+    attroff(COLOR_PAIR(4));
+    getch();
+}
+
 //----------------------------------------------------------------------------------------------------------
 int Login(){
    
@@ -1578,7 +1648,7 @@ int Login(){
    
     }
     else if(number == 3){
-
+        Scoreboard();
     }
     else if(number == 4){
         Settings();
