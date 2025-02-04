@@ -336,7 +336,9 @@ int key(int y, int x, char c, int k){
             //cell.pixel[k][y][x].namayesh = 1;
         }
     }
-    else if(c == 'E'){
+    else if(c == 'S'){
+        int number = 0;
+        char s;
         clear();
         attron(COLOR_PAIR(2));
         mvprintw(5, 54, "R O G U E    G A M E");
@@ -352,8 +354,42 @@ int key(int y, int x, char c, int k){
         mvprintw(12, 94, "%d", cell.tdamage);
         mvprintw(14, 34, "Speed spell");
         mvprintw(14, 94, "%d", cell.tspeed);
-        mvprintw(33, 54, "Press enter to resume the game!");
-        getch();
+        mvprintw(33, 54, "Press R to resume the game!");    
+        while(s != 'R'){
+        attron(COLOR_PAIR(4));
+        mvprintw(2 * number + 10, 30, "**");
+        noecho();
+            if(s == 65){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = ((number + 2) % 3);
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == 66){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = (number + 1) % 3;
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == '5'){
+                attroff(COLOR_PAIR(4));
+                if(number == 0 && cell.thealthy > 0){
+                    cell.thealthy--;
+                    mvprintw(10, 94, "%d", cell.thealthy);
+                }
+                if(number == 1 && cell.tdamage > 0){
+                    cell.tdamage--;
+                    mvprintw(12, 94, "%d", cell.tdamage);
+                }
+                if(number == 2 && cell.tspeed > 0){
+                    cell.tspeed--;
+                    mvprintw(14, 94, "%d", cell.tspeed);
+                }
+            }
+            move(37, 152);
+            attroff(COLOR_PAIR(4));
+            s = getch();
+        }
         for(int j = 0; j < 38; j++){
             for(int i = 0; i < 153; i++){
                 mvprintw(j, i, " ");
@@ -367,6 +403,8 @@ int key(int y, int x, char c, int k){
     }
     
     else if(c == 'i'){
+        int number = 0;
+        char s;
         clear();
         attron(COLOR_PAIR(2));
         mvprintw(5, 54, "R O G U E    G A M E");
@@ -387,7 +425,60 @@ int key(int y, int x, char c, int k){
         mvprintw(18, 34, "Sword");
         mvprintw(18, 94, "%d", cell.shamshir);
         mvprintw(33, 54, "Press enter to resume the game!");
-        getch();
+        while(s != 'R'){
+        attron(COLOR_PAIR(4));
+        mvprintw(2 * number + 10, 30, "**");
+        noecho();
+            if(s == 65){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = ((number + 4) % 5);
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == 66){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = (number + 1) % 5;
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == '5'){
+                attroff(COLOR_PAIR(4));
+                if(number == 0 && cell.gorz > 0){
+                    cell.gorz--;
+                    mvprintw(10, 94, "%d", cell.gorz);
+                }
+                if(number == 1 && cell.khanjar > 0){
+                    cell.khanjar--;
+                    mvprintw(12, 94, "%d", cell.khanjar);
+                }
+                if(number == 2 && cell.asa > 0){
+                    cell.asa--;
+                    mvprintw(14, 94, "%d", cell.asa);
+                }
+                if(number == 3 && cell.tir > 0){
+                    cell.tir--;
+                    mvprintw(16, 94, "%d", cell.tir);
+                }
+                if(number == 4 && cell.shamshir > 0){
+                    cell.shamshir--;
+                    mvprintw(18, 94, "%d", cell.shamshir);
+                }
+            }
+            move(37, 152);
+            attroff(COLOR_PAIR(4));
+            s = getch();
+        }
+        for(int j = 0; j < 38; j++){
+            for(int i = 0; i < 153; i++){
+                mvprintw(j, i, " ");
+                if (cell.pixel[k][j][i].namayesh == 1){
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                }
+            }
+        }
+
+
+
         for(int j = 0; j < 38; j++){
             for(int i = 0; i < 153; i++){
                 mvprintw(j, i, " ");
