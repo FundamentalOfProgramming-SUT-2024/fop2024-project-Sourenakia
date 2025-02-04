@@ -63,7 +63,7 @@ void update_screen(int k){
 	}
 }
 //------------------------------------------sehat---------------------------------------
-/*/
+
 int sehat(int y1, int x1, int y2, int x2, int k){
     if(y1 > y2){
         int temp = y2;
@@ -85,7 +85,7 @@ int sehat(int y1, int x1, int y2, int x2, int k){
     }
     return 1;
 }
-/*/
+
 //------------------------------------------show----------------------------------------
 
 int mahdood_room(int y, int x, int k){
@@ -114,18 +114,14 @@ int mahdood_room(int y, int x, int k){
             break;
         }
     }
-    for(int j = m1; j <= m2; j++){
-        for(int i = n1; i <= n2; i++){
-            if(cell.pixel[k][j][i].previous != '#' && cell.pixel[k][j][i].font != '^'){
+    for(int j = m1 - 1; j <= m2 + 1; j++){
+        for(int i = n1 - 1; i <= n2 + 1; i++){
+            if(cell.pixel[k][j][i].previous != '#' && cell.pixel[k][j][i].previous != '^'){
                 mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
                 cell.pixel[k][j][i].namayesh = 1;
                 if(cell.pixel[k][j][i].previous == '+'){
                     cell.pixel[k][j][i].check = 1;
                 }
-            }
-            if (cell.pixel[k][j][i].font == '^'){
-                mvprintw(j, i, ".");
-                cell.pixel[k][j][i].namayesh = 1;
             }
         }
     }
@@ -134,39 +130,21 @@ int mahdood_room(int y, int x, int k){
 
 //----------------------------------------------------rahroh--------------------------
 int Rahroh_mahdood(int y, int x, int k){
-    if(cell.pixel[k][y + 1][x].font == '+' || cell.pixel[k][y + 1][x].font == '#'){
-        mvprintw(y + 1, x, "%c", cell.pixel[k][y + 1][x].font);
-        cell.pixel[k][y + 1][x].namayesh = 1;
+    if(cell.pixel[k][y][x].previous == '#' || cell.pixel[k][y][x].previous == '+'){
+        for(int j = y - 5; j <= y + 5; j++){
+            for(int i = x - 5; i <= x + 5; i++){
+                if(cell.pixel[k][j][i].previous == '#' || cell.pixel[k][j][i].previous == '+'){
+                    if(ghadr(i + j, x + y) < 6){
+                        if(sehat(y, x, j, i, k)){
+                            mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                            move(37, 152);
+                            cell.pixel[k][j][i].namayesh = 1;
+                        }
+                    }
+                }
+            }
+        }
     }
-    if(cell.pixel[k][y + 1][x + 1].font == '+' || cell.pixel[k][y + 1][x + 1].font == '#'){
-        mvprintw(y + 1, x + 1, "%c", cell.pixel[k][y + 1][x + 1].font);
-        cell.pixel[k][y + 1][x + 1].namayesh = 1;
-    }
-    if(cell.pixel[k][y + 1][x - 1].font == '+' || cell.pixel[k][y + 1][x - 1].font == '#'){
-        mvprintw(y + 1, x - 1, "%c", cell.pixel[k][y + 1][x - 1].font);
-        cell.pixel[k][y + 1][x - 1].namayesh = 1;
-    }
-    if(cell.pixel[k][y - 1][x - 1].font == '+' || cell.pixel[k][y - 1][x - 1].font == '#'){
-        mvprintw(y - 1, x - 1, "%c", cell.pixel[k][y - 1][x - 1].font);
-        cell.pixel[k][y - 1][x - 1].namayesh = 1;
-    }
-    if(cell.pixel[k][y - 1][x].font == '+' || cell.pixel[k][y - 1][x].font == '#'){
-        mvprintw(y - 1, x, "%c", cell.pixel[k][y - 1][x].font);
-        cell.pixel[k][y - 1][x].namayesh = 1;
-    }
-    if(cell.pixel[k][y - 1][x + 1].font == '+' || cell.pixel[k][y - 1][x + 1].font == '#'){
-        mvprintw(y - 1, x + 1, "%c", cell.pixel[k][y - 1][x + 1].font);
-        cell.pixel[k][y - 1][x + 1].namayesh = 1;
-    }
-    if(cell.pixel[k][y][x + 1].font == '+' || cell.pixel[k][y][x + 1].font == '#'){
-        mvprintw(y, x + 1, "%c", cell.pixel[k][y][x + 1].font);
-        cell.pixel[k][y][x + 1].namayesh = 1;
-    }
-    if(cell.pixel[k][y][x - 1].font == '+' || cell.pixel[k][y][x - 1].font == '#'){
-        mvprintw(y, x - 1, "%c", cell.pixel[k][y][x - 1].font);
-        cell.pixel[k][y][x - 1].namayesh = 1;
-    }
-    move(37, 152);
 }
 //-------------------------------------------KEY----------------------------------------
 
@@ -176,6 +154,7 @@ int key(int y, int x, char c, int k){
     mvprintw(1, 1, "                                                                         ");
     move(37, 152);
 
+    
 
     if(c == '1'){
         if (cell.pixel[k][y + 1][x - 1].flag != 0 && cell.pixel[k][y + 1][x - 1].font != '|' &&
@@ -338,8 +317,33 @@ int key(int y, int x, char c, int k){
 //-------------------------------------------------------------------------------------- 
     
     
-    else if(c == 27) {
-        
+    else if(c == 27) {/*
+       if (testkey != 1) {
+            FILE *fptr;
+            pix temp;
+            int p = 0;
+            int b = 1;
+            fptr = (fopen("usersinfo.dat","rb"));
+            fread(&temp, sizeof(pix), 1, fptr);
+            while(!feof(fptr) &&  b){
+                if(!strcmp(temp.name, cell.name)){
+                    b = 0;;
+                } 
+                else{ 
+                    fread(&temp, sizeof(pix), 1, fptr);
+                    p = p + 1;
+                    }
+            }
+            fclose(fptr);
+            fptr = (fopen("usersinfo.dat","rb+"));
+            fseek(fptr,(p * sizeof(pix)), SEEK_SET);
+            fwrite(&cell,sizeof(pix), 1,fptr);
+            fclose(fptr); 
+        }*/
+       mvprintw(5,5,"ESCAPE  ENTER ...");
+
+       getch();
+       
     return 1;
    }
    
@@ -434,11 +438,10 @@ int key(int y, int x, char c, int k){
     }
     
     move(37, 152);
-    int point = 1;
+    Rahroh_mahdood(y, x, k);
     if(c == 'M'){
         M++;
         if(M % 2){
-            point = 1;
             update_screen(k);
         }
         else{
@@ -447,27 +450,13 @@ int key(int y, int x, char c, int k){
                     mvprintw(j, i, " ");
                     if (cell.pixel[k][j][i].namayesh == 1){
                         mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
-                        mvprintw(j, i, "1");
-                        point = 0;
                     }
                 }
             }
         }
-        
+        mahdood_room(y, x, k);
     }
-    mahdood_room(y, x, k);
-    Rahroh_mahdood(y, x, k);
-    for(int j = 0; j < 38; j++){
-        for(int i = 0; i < 153; i++){
-            if(cell.pixel[k][j][i].namayesh == 0 && !point){
-                mvprintw(j, i, " ");
-            }
-        }
-    }
-
     c = getch();
-
-    
     move(37, 152);
     if(cell.pixel[k][y][x].previous == '^'){
         for(int i = 0; i < 38; i++){
@@ -1004,6 +993,13 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
 }
 
 int Main_game(int k){
+  /*  int i,j,l;
+    for (l=0; l<=k; ++l)
+      for (j=0; j<38; ++j)
+        for (i=0 ; i<153; ++i){
+           cell.pixel[l][j][i].font = ' ';
+           cell.pixel[l][j][i].flag = 0;
+        }*/
     for (int j = 0; j < 38; ++j)
       for(int i = 0; i < 153; ++i){
           cell.pixel[0][j][i].font = ' ';
@@ -1184,7 +1180,7 @@ int Main_game(int k){
             }
         }
     }
-    
+    //update_screen(k);
     int p = 0, m, n;
     for(int j = 13; j < 27; j++){
         for(int i = 45; i < 120; i++){
@@ -1211,6 +1207,18 @@ int Main_game(int k){
     char c = getch();
     
     key(m , n, c, k);
+/*getch();
+ mvprintw(2,2,"Main Game");
+getch();
+               for (int j=0; j < 38; ++j)
+                   for(int i=0; i<153; ++i)
+                        mvprintw(j , i ," ");
+      
+
+                for (int j=0; j < 38; ++j)
+                   for(int i=0; i<153; ++i)
+                        mvprintw(j , i ,"%c",cell.pixel[0][j][i].font);
+ getch();*/
             FILE *fptr;
             pix temp;
             int pp = 0;
@@ -1231,7 +1239,9 @@ int Main_game(int k){
             fseek(fptr,(pp * sizeof(pix)), SEEK_SET);
             fwrite(&cell,sizeof(pix), 1,fptr);
             fclose(fptr); 
-  
+   
+
+    
     
 }
 
@@ -1278,6 +1288,9 @@ int Check_password(){
                         mvprintw(32, 54, "Hello! %s!", cell.name);
                         mvprintw(33, 54, "Press enter to start the game!");
                         p = 0;
+                /*        getch();
+                           update_screen(0);
+                            getch();*/
                         break;
                     }
                     mvprintw(32, 54, "INCORECT PASSWORD!!! Please try again!");
@@ -1332,7 +1345,7 @@ int New_user(){
                 mvprintw(32, 54, "WARNING!!! The username you enterd is already taken!");
                 attroff(COLOR_PAIR(2));
                 p=0;
-              
+              //  break;
             } 
             else{ 
                fread(&temp, sizeof(temp), 1, fptr);
@@ -1564,14 +1577,81 @@ int Login(){
 
 
 
+
     if(number == 1){
-     
-     Main_game(0);
+        //if(Check_password() == 1){
+          //  Main_game(0);
+        //}
+    Main_game(0);
+    /*
+    pix temp;
+    int p = 0;
+    int b = 1;
+    FILE *fptr;
+    fptr = (fopen("usersinfo.dat","rb+"));
+    fread(&temp, sizeof(cell), 1, fptr);
+    while(!feof(fptr) && b){
+        if(!strcmp(temp.name, cell.name)){
+            b = 0;
+        } 
+        else{ 
+            fread(&temp, sizeof(cell), 1, fptr);
+            ++p;
+        }
+    }
+    //--p;
+    fseek(fptr,(p * sizeof(cell)), SEEK_SET);
+    fwrite(&cell,sizeof(cell), 1,fptr);
+
+    fclose(fptr); */
     
     }
 
+
+
+
+
+
+
+
     else if(number == 2){
 
+        //Check_password();
+        
+        //if(Check_password() == 1){
+ /*
+            mvprintw(11, 50, "                                                                  ");
+            attron(COLOR_PAIR(3));
+            //mvscanw(11,50, "%s", tempi.name);
+          char tempchar[40];
+            strcpy(tempchar,cell.name);
+            int b = 1;
+            int p = 0;
+            FILE *fptr;
+            fptr = (fopen("usersinfo.dat","rb"));
+            fread(&cell, sizeof(cell), 1, fptr);
+            while(!feof(fptr) && b){
+                if (!strcmp(cell.name,tempchar)){
+          //          mvprintw(10,100,"%s",cell.name);
+                    b = 0;
+                 //   break;
+                }               
+                else{     
+        //            mvprintw(25,100,"%s",cell.name);
+                    ++p;
+                    fread(&cell, sizeof(cell), 1, fptr);
+                }
+            }
+          //  --p;
+            fseek(fptr,(p * sizeof(cell)), SEEK_SET);
+            fread(&cell,sizeof(cell),1,fptr);
+        //    update_screen(0);
+            
+                mvprintw(5,5,"LAST  GAME");
+                mvprintw(10,5,"%s",cell.password);
+
+                getch();
+*/
                 for (int j=0; j < 38; ++j)
                    for(int i=0; i<153; ++i)
                         mvprintw(j , i ," ");
@@ -1580,10 +1660,59 @@ int Login(){
                 for (int j=0; j < 38; ++j)
                    for(int i=0; i<153; ++i)
                         mvprintw(j , i ,"%c",cell.pixel[0][j][i].font);
-
-                getch();
       
-   
+       // }
+   /**/
+     //       for(int j = 0; j < 38; j++){
+       //         for(int i = 0; i < 153; i++){
+                    //cell.pixel[0][j][i].font = 'a';
+                    //mvprintw(j, i, "%c", cell.pixel[0][j][i].font);
+              //  }
+      //      }
+            //mvprintw(10, 10, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+        
+        getch();
+    //}
+        /*/
+         int k = 0;
+           int m, n;
+            for(int j = 0; j < 38; j++){
+                for(int i = 0; i < 153; i++){
+                    if(cell.pixel[k][j][i].font == '@'){
+                        m = j;
+                        n = i;
+                        break;
+                    }
+                }
+            }
+            update_screen(k);
+            mvprintw(m,n,"@");
+            char c = getch();
+       key(m, n, c, k);
+    //----------------------------------------- Writing... ----------------------------------------
+/*
+    FILE *fptr;
+    pix temp;
+    int p = 0;
+
+    fptr = (fopen("usersinfo.dat","rb+"));
+    fread(&temp, sizeof(cell), 1, fptr);
+    while(!feof(fptr)){
+        if(!strcmp(temp.name, cell.name)){
+            break;
+        } 
+        else{ 
+            fread(&temp, sizeof(cell), 1, fptr);
+            ++p;
+        }
+    }
+    fseek(fptr,(p * sizeof(cell)), SEEK_SET);
+    fwrite(&cell,sizeof(cell), 1,fptr);
+    fclose(fptr); 
+        }
+    }
+
+*/
     }
     else if(number == 3){
 
@@ -1670,9 +1799,9 @@ int main(){
         }
         else if(number == 2){
             int p = Check_password();
-
+            //update_screen(0);
+            //getch();
             int a = Login();
-
             if(a == 6){
                 refresh();
                 endwin();
