@@ -441,13 +441,14 @@ int key(int y, int x, char c, int k){
             point = 1;
             update_screen(k);
         }
+        //right
         else{
             for(int j = 0; j < 38; j++){
                 for(int i = 0; i < 153; i++){
                     mvprintw(j, i, " ");
                     if (cell.pixel[k][j][i].namayesh == 1){
                         mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
-                        mvprintw(j, i, "1");
+                        //mvprintw(j, i, "1");
                         point = 0;
                     }
                 }
@@ -455,16 +456,7 @@ int key(int y, int x, char c, int k){
         }
         
     }
-    mahdood_room(y, x, k);
     Rahroh_mahdood(y, x, k);
-    for(int j = 0; j < 38; j++){
-        for(int i = 0; i < 153; i++){
-            if(cell.pixel[k][j][i].namayesh == 0 && !point){
-                mvprintw(j, i, " ");
-            }
-        }
-    }
-
     c = getch();
 
     
