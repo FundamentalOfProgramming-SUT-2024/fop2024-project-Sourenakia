@@ -12,6 +12,7 @@ typedef struct{
     int flag;
     int check;
     int namayesh;
+    int healthy;
 }mainpixel;
 
 
@@ -23,8 +24,16 @@ typedef struct{
     int floor;
     int gold;
     int thealthy, tspeed, tdamage;
-    int tir, gorz, khanjar, asa, shamshir, food;
+    int tir, gorz, khanjar, asa, shamshir, foodmajic, foodperfect, mainfood;
+    int health, score, exp; 
 }pix;
+
+typedef struct{
+    char name[40];
+    int gold, exp, score;
+}score;
+
+
 
 int Main_game(int k);
 
@@ -117,16 +126,25 @@ int mahdood_room(int y, int x, int k){
             break;
         }
     }
+
+    for(int j = 0; j < 37; j++){
+        for(int i = 0; i < 153; i++){
+            if(cell.pixel[k][j][i].namayesh == 1){
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+            }
+        }
+    }
+
     for(int j = m1; j <= m2; j++){
         for(int i = n1; i <= n2; i++){
-            if(cell.pixel[k][j][i].previous != '#' && cell.pixel[k][j][i].font != '^'){
+            if(cell.pixel[k][j][i].previous != '#' && cell.pixel[k][j][i].previous != '^'){
                 mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
                 cell.pixel[k][j][i].namayesh = 1;
                 if(cell.pixel[k][j][i].previous == '+'){
                     cell.pixel[k][j][i].check = 1;
                 }
             }
-            if (cell.pixel[k][j][i].font == '^'){
+            if (cell.pixel[k][j][i].previous == '^'){
                 mvprintw(j, i, ".");
                 cell.pixel[k][j][i].namayesh = 1;
             }
@@ -476,9 +494,67 @@ int key(int y, int x, char c, int k){
                 }
             }
         }
+        c = getch();
+        key(y, x, c, k);
+    }
 
-
-
+    else if(c == 'E'){
+        int number = 0;
+        char s;
+        clear();
+        attron(COLOR_PAIR(2));
+        mvprintw(5, 54, "R O G U E    G A M E");
+        attroff(COLOR_PAIR(2));
+        attron(COLOR_PAIR(4));
+        mvprintw(6, 58, "FOODS MENUE!!!");
+        attroff(COLOR_PAIR(4));
+        mvprintw(8, 30, "Fodd name:");
+        mvprintw(8, 90, "food number:");
+        mvprintw(10, 34, "Normal food");
+        mvprintw(10, 94, "%d", cell.mainfood);
+        mvprintw(12, 34, "Majic food");
+        mvprintw(12, 94, "%d", cell.foodmajic);
+        mvprintw(14, 34, "Perfect food");
+        mvprintw(14, 94, "%d", cell.foodperfect);
+        mvprintw(33, 54, "Press enter to resume the game!");
+        while(s != 'R'){
+        attron(COLOR_PAIR(4));
+        mvprintw(2 * number + 10, 30, "**");
+        noecho();
+            if(s == 65){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = ((number + 4) % 5);
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == 66){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = (number + 1) % 5;
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == '5'){
+                attroff(COLOR_PAIR(4));
+                if(number == 0 && cell.mainfood > 0){
+                    cell.mainfood--;
+                    cell.health++;
+                    mvprintw(10, 94, "%d", cell.mainfood);
+                }
+                if(number == 1 && cell.foodmajic > 0){
+                    cell.foodmajic--;
+                    mvprintw(12, 94, "%d", cell.foodmajic);
+                    cell.health++;
+                }
+                if(number == 2 && cell.foodperfect > 0){
+                    cell.foodperfect--;
+                    cell.health++;
+                    mvprintw(14, 94, "%d", cell.foodperfect);
+                }
+            }
+            move(37, 152);
+            attroff(COLOR_PAIR(4));
+            s = getch();
+        }
         for(int j = 0; j < 38; j++){
             for(int i = 0; i < 153; i++){
                 mvprintw(j, i, " ");
@@ -493,9 +569,8 @@ int key(int y, int x, char c, int k){
 //-------------------------------------------------------------------------------------- 
     
     
-    else if(c == 27) {
-        
-    return 1;
+    else if(c == 27) {        
+       return 1;
    }
    
 //--------------------------------------------------------------------------------------
@@ -533,6 +608,7 @@ int key(int y, int x, char c, int k){
       //      key_show(y, x, f, k);
        }
     }
+    cell.score = 2 * cell.gold;
     if(cell.pixel[k][y][x].previous == 'g'){
         f = getch();
         move(37, 152);
@@ -582,12 +658,41 @@ int key(int y, int x, char c, int k){
         f = getch();
         move(37, 152);
         if(f == '5'){
-            cell.pixel[k][y][x].previous = '.';
-            cell.food++;
-            //f = getch();
+            if ((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6)    
+                cell.pixel[k][y][x].previous = '.';
+                cell.mainfood++;
+            }
+        else{
+            mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
         }
     }
-    
+    if(cell.pixel[k][y][x].previous == 'm'){
+        f = getch();
+        move(37, 152);
+        if(f == '5'){
+            if((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){
+                cell.pixel[k][y][x].previous = '.';
+                cell.foodmajic++;
+                //f = getch();
+            }
+            else{
+                mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
+            }
+        }
+    }
+    if(cell.pixel[k][y][x].previous == 'm'){
+        f = getch();
+        move(37, 152);
+        if(f == '5' && (cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){
+            if ((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6)
+                cell.pixel[k][y][x].previous = '.';
+                cell.foodperfect++;
+                //f = getch();
+            }
+        else{
+            mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
+        }
+    }
     if(cell.pixel[k][y][x].previous == '<'){
         f = getch();
         if(f == '5'){
@@ -650,6 +755,7 @@ int key(int y, int x, char c, int k){
         key(75, 20, c, k);
     }
     mvprintw(34, 10, "GOLD: %d", cell.gold);
+    mvprintw(34, 18, "Health: %d", cell.health);
     move(37, 152);
     key(y, x, c, k);
     return 1;
@@ -961,11 +1067,11 @@ int jadval(int ax, int bx, int ay, int by, int k){
                     cell.pixel[k][j][i].flag = 15;
                 }
                 if(randomi == 2){
-                    cell.pixel[k][j][i].font = 'F';
+                    cell.pixel[k][j][i].font = 'm';
                     cell.pixel[k][j][i].flag = 16;
                 }
                 if(randomi == 3){
-                    cell.pixel[k][j][i].font = 'F';
+                    cell.pixel[k][j][i].font = 'p';
                     cell.pixel[k][j][i].flag = 17;
                 }
                 if(randomi == 4){
@@ -1134,7 +1240,7 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
                 m2 = j;
                 n2 = i;
                 p2++;
-        }
+            }
         }
     }
     if (p1 + p2 == 2){
@@ -1169,9 +1275,7 @@ int Main_game(int k){
         }
     }   
 
-    cell.thealthy = 0, cell.tspeed = 0, cell.tdamage = 0;
-    cell.tir = 0, cell.gorz = 0, cell.khanjar = 0, cell.asa = 0, cell.shamshir = 0, cell.food = 0;
-
+    
     cell.floor = k;
     srand(time(0));
     int tedad = Random_number(11, 18);
@@ -1396,7 +1500,7 @@ int Main_game(int k){
                 continue;
             }
             else{
-                if ((randomx < n2 && randomx > n1) && (randomy < m2 && randomy > m2)){
+                if ((randomx < n2 && randomx > n1) && (randomy < m2 && randomy > m1)){
                     continue;
                 }
                 else{
@@ -1416,33 +1520,27 @@ int Main_game(int k){
     }
     mahdood_room(m, n, k);
     char c = getch();
-    
     key(m , n, c, k);
-            FILE *fptr;
-            pix temp;
-            int pp = 0;
-            int bb = 1;
-            fptr = (fopen("usersinfo.dat","rb"));
+        
+    FILE *fptr;
+    pix temp;
+    int pp = 0;
+    int bb = 1;
+    fptr = (fopen("usersinfo.dat","rb+"));
+    fread(&temp, sizeof(pix), 1, fptr);
+    while(!feof(fptr) &&  bb){
+        if(!strcmp(temp.name, cell.name)){
+            bb = 0;;
+        } 
+        else{ 
             fread(&temp, sizeof(pix), 1, fptr);
-            while(!feof(fptr) &&  bb){
-                if(!strcmp(temp.name, cell.name)){
-                    bb = 0;;
-                } 
-                else{ 
-                    fread(&temp, sizeof(pix), 1, fptr);
-                    pp = pp + 1;
-                    }
+            pp = pp + 1;
             }
-            fclose(fptr);
-            fptr = (fopen("usersinfo.dat","rb+"));
-            fseek(fptr,(pp * sizeof(pix)), SEEK_SET);
-            fwrite(&cell,sizeof(pix), 1,fptr);
-            fclose(fptr); 
-  
-    
+    }
+    fseek(fptr,(pp * sizeof(pix)), SEEK_SET);
+    fwrite(&cell,sizeof(pix), 1,fptr);
+    fclose(fptr);     
 }
-
-
 
 int Check_password(){
     FILE *fptr;
@@ -1504,7 +1602,6 @@ int Check_password(){
     
     getch();
     return p;
-
 }
 
 
@@ -1736,6 +1833,72 @@ int Scoreboard(){
     attroff(COLOR_PAIR(2));
     attron(COLOR_PAIR(4));
     mvprintw(6, 58, "SCOREBOARD!!!");
+
+    int i,j;
+    pix temp;
+    score userscore[100];
+    score tempscore;
+    FILE *fptr;
+
+    i = 0;
+    fptr = (fopen("usersinfo.dat","rb"));
+    
+    fread(&temp, sizeof(temp), 1, fptr);
+    while(!feof(fptr)){        
+        userscore[i].exp = temp.exp;
+        userscore[i].gold = temp.gold;
+        userscore[i].score = temp.score;
+        strcpy(userscore[i].name , temp.name);
+        i++;       
+               
+        fread(&temp, sizeof(temp), 1, fptr);    
+    }
+    attroff(COLOR_PAIR(4));
+    attron(A_BOLD);
+    mvprintw(8, 15, "Username:");
+    mvprintw(8, 50, "Gold:");
+    mvprintw(8, 85, "Experience:");
+    mvprintw(8, 120, "Score:");
+    attroff(A_BOLD);
+    int number = 0;
+    
+    for (i = 9; i > 0 ; --i){
+        for (j = 0; j < i; ++j){
+            if (userscore[j].score < userscore[j+1].score){ 
+                tempscore = userscore[j];
+                userscore[j] = userscore[j+1];
+                userscore[j+1] = tempscore;
+    
+            }
+       }    
+    }
+
+    attron(COLOR_PAIR(3));
+    for(int i = 0; i < 10; i++){
+        mvprintw(10 + i * 2, 17, "%s", userscore[i].name);
+    }
+    for(int i = 0; i < 10; i++){
+        mvprintw(10 + i * 2, 52, "%d", userscore[i].gold);
+    }
+    for(int i = 0; i < 10; i++){
+        mvprintw(10 + i * 2, 87, "%d", userscore[i].exp);
+    }
+    for(int i = 0; i < 10; i++){
+        mvprintw(10 + i * 2, 122, "%d", userscore[i].score);
+    }
+    attroff(COLOR_PAIR(3));
+    /*
+    for(int i = 0; i < 10; i++){
+        if(!strcmp(userscore[i].name, cell.name)){
+            for(int j = 0)
+        }
+    }
+    */
+
+    fclose(fptr);
+    
+
+
     attroff(COLOR_PAIR(4));
     getch();
 }
@@ -1779,32 +1942,60 @@ int Login(){
         }
         c = getch();
     }
+
     number++;
     attroff(COLOR_PAIR(4));
 
 
-
     if(number == 1){
-     
-     Main_game(0);
+        cell.exp++;
+        Main_game(0);
     
     }
 
     else if(number == 2){
+        cell.exp++;
+    
+        int m, n;
+        for (int j = 0; j < 37; j++){
+            for (int i = 0; i < 153; i++){
+                if (cell.pixel[cell.floor][j][i].font == '@'){
+                    m = j;
+                    n = i;
+                }
+            }
+        }
 
-                for (int j=0; j < 38; ++j)
-                   for(int i=0; i<153; ++i)
-                        mvprintw(j , i ," ");
-      
+        clear();
 
-                for (int j=0; j < 38; ++j)
-                   for(int i=0; i<153; ++i)
-                        mvprintw(j , i ,"%c",cell.pixel[0][j][i].font);
+        mvprintw(m, n, "@");
+        move(37, 152);
+        noecho();
+        
+        mahdood_room(m, n, cell.floor);
+        char c = getch();
+        key(m , n, c, cell.floor);
 
-                getch();
-      
-   
+        FILE *fptr;
+        pix temp;
+        int pp = 0;
+        int bb = 1;
+        fptr = (fopen("usersinfo.dat","rb+"));
+        fread(&temp, sizeof(pix), 1, fptr);
+        while(!feof(fptr) &&  bb){
+            if(!strcmp(temp.name, cell.name)){
+                bb = 0;;
+            } 
+            else{ 
+                fread(&temp, sizeof(pix), 1, fptr);
+                pp = pp + 1;
+                }
+        }
+        fseek(fptr,(pp * sizeof(pix)), SEEK_SET);
+        fwrite(&cell,sizeof(pix), 1,fptr);
+        fclose(fptr);        
     }
+
     else if(number == 3){
         Scoreboard();
     }
@@ -1835,6 +2026,10 @@ int main(){
            cell.pixel[l][j][i].flag = 0;
            cell.pixel[l][j][i].namayesh = 0;
     }
+    cell.thealthy = 0, cell.tspeed = 0, cell.tdamage = 0;
+    cell.tir = 0, cell.gorz = 0, cell.khanjar = 0, cell.asa = 0, cell.shamshir = 0, cell.mainfood = 0;
+    cell.foodmajic = 0, cell.foodperfect = 0; 
+    cell.health = 100, cell.gold = 0, cell.score = 0, cell.exp = 0;
     initscr();
     while(true){
         clear();
@@ -1884,7 +2079,6 @@ int main(){
         if(number == 1){
             if (New_user() == 1){
                 Login();
-
    
             }
         }
