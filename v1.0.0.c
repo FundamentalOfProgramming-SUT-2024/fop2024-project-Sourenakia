@@ -22,6 +22,8 @@ typedef struct{
     char email[40];
     int floor;
     int gold;
+    int thealthy, tspeed, tdamage;
+    int tir, gorz, khanjar, asa, shamshir, food;
 }pix;
 
 int Main_game(int k);
@@ -31,8 +33,7 @@ int M = 0;
 int testkey = 0;
 
 int Login();
-int thealthy = 0, tspeed = 0, tdamage = 0;
-int tir = 0, gorz = 0, khanjar = 0, asa = 0, shamshir = 0, food = 0; 
+ 
 
 int ghadr(int x, int y){
     int a = x - y;
@@ -335,8 +336,69 @@ int key(int y, int x, char c, int k){
             //cell.pixel[k][y][x].namayesh = 1;
         }
     }
+    else if(c == 'E'){
+        clear();
+        attron(COLOR_PAIR(2));
+        mvprintw(5, 54, "R O G U E    G A M E");
+        attroff(COLOR_PAIR(2));
+        attron(COLOR_PAIR(4));
+        mvprintw(6, 58, "SPELL MENUE!!!");
+        attroff(COLOR_PAIR(4));
+        mvprintw(8, 30, "Spells name:");
+        mvprintw(8, 90, "Spells number:");
+        mvprintw(10, 34, "Health spell");
+        mvprintw(10, 94, "%d", cell.thealthy);
+        mvprintw(12, 34, "Damage spell");
+        mvprintw(12, 94, "%d", cell.tdamage);
+        mvprintw(14, 34, "Speed spell");
+        mvprintw(14, 94, "%d", cell.tspeed);
+        mvprintw(33, 54, "Press enter to resume the game!");
+        getch();
+        for(int j = 0; j < 38; j++){
+            for(int i = 0; i < 153; i++){
+                mvprintw(j, i, " ");
+                if (cell.pixel[k][j][i].namayesh == 1){
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                }
+            }
+        }
+        c = getch();
+        key(y, x, c, k);
+    }
     
-    
+    else if(c == 'i'){
+        clear();
+        attron(COLOR_PAIR(2));
+        mvprintw(5, 54, "R O G U E    G A M E");
+        attroff(COLOR_PAIR(2));
+        attron(COLOR_PAIR(4));
+        mvprintw(6, 58, "SPELL MENUE!!!");
+        attroff(COLOR_PAIR(4));
+        mvprintw(8, 30, "WEAPON name:");
+        mvprintw(8, 90, "Weapon number:");
+        mvprintw(10, 34, "Mace");
+        mvprintw(10, 94, "%d", cell.gorz);
+        mvprintw(12, 34, "Dagger");
+        mvprintw(12, 94, "%d", cell.khanjar);
+        mvprintw(14, 34, "Majic Wand");
+        mvprintw(14, 94, "%d", cell.asa);
+        mvprintw(16, 34, "Normal Arrow");
+        mvprintw(16, 94, "%d", cell.tir);
+        mvprintw(18, 34, "Sword");
+        mvprintw(18, 94, "%d", cell.shamshir);
+        mvprintw(33, 54, "Press enter to resume the game!");
+        getch();
+        for(int j = 0; j < 38; j++){
+            for(int i = 0; i < 153; i++){
+                mvprintw(j, i, " ");
+                if (cell.pixel[k][j][i].namayesh == 1){
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                }
+            }
+        }
+        c = getch();
+        key(y, x, c, k);
+    }
 //-------------------------------------------------------------------------------------- 
     
     
@@ -363,13 +425,13 @@ int key(int y, int x, char c, int k){
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
             if(cell.pixel[k][y][x].flag == 12){
-                thealthy++;
+                cell.thealthy++;
             }
             if(cell.pixel[k][y][x].flag == 13){
-                tdamage++;
+                cell.tdamage++;
             }
             if(cell.pixel[k][y][x].flag == 14){
-                tspeed++;
+                cell.tspeed++;
             }
       //      mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
         //    mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -385,7 +447,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            gorz++;
+            cell.gorz++;
             //f = getch();
         }
     }
@@ -394,7 +456,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            tir++;
+            cell.tir++;
             //f = getch();
         }
     }
@@ -403,7 +465,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            asa++;
+            cell.asa++;
             //f = getch();
         }
     }
@@ -412,7 +474,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            shamshir++;
+            cell.shamshir++;
             //f = getch();
         }
     }
@@ -421,7 +483,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            khanjar++;
+            cell.khanjar++;
             //f = getch();
         }
     }
@@ -430,7 +492,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            food++;
+            cell.food++;
             //f = getch();
         }
     }
@@ -1005,15 +1067,20 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
 }
 
 int Main_game(int k){
-    for (int j = 0; j < 38; ++j)
-      for(int i = 0; i < 153; ++i){
-          cell.pixel[k][j][i].font = ' ';
-          cell.pixel[k][j][i].check = 0;
-          cell.pixel[k][j][i].flag = 0;
-          cell.pixel[k][j][i].location = ' ';
-          cell.pixel[k][j][i].namayesh = 0;
-          cell.pixel[k][j][i].previous = ' ';
-      }
+    for (int j = 0; j < 38; ++j){
+        for(int i = 0; i < 153; ++i){
+            cell.pixel[k][j][i].font = ' ';
+            cell.pixel[k][j][i].check = 0;
+            cell.pixel[k][j][i].flag = 0;
+            cell.pixel[k][j][i].location = ' ';
+            cell.pixel[k][j][i].namayesh = 0;
+            cell.pixel[k][j][i].previous = ' ';
+        }
+    }   
+
+    cell.thealthy = 0, cell.tspeed = 0, cell.tdamage = 0;
+    cell.tir = 0, cell.gorz = 0, cell.khanjar = 0, cell.asa = 0, cell.shamshir = 0, cell.food = 0;
+
     cell.floor = k;
     srand(time(0));
     int tedad = Random_number(11, 18);
