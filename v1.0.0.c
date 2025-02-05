@@ -3,7 +3,9 @@
 #include<string.h>
 #include<stdlib.h>
 #include<time.h>
-
+#define COLOR_GOLD 8
+#define COLOR_SILVER 9
+#define COLOR_BORONZE 10
 
 
 typedef struct{
@@ -40,6 +42,7 @@ int Main_game(int k);
 pix cell;
 int M = 0;
 int testkey = 0;
+int herocolor = 1;
 
 int Login();
  
@@ -71,33 +74,16 @@ void update_screen(int k){
             else{
                 mvprintw(j, i, ".");
             }
+            if(cell.pixel[k][j][i].font == '@'){
+                attron(COLOR_PAIR(herocolor));
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                attroff(COLOR_PAIR(herocolor));
+                attron(COLOR_PAIR(1));
+            }
 		}
 	}
 }
-//------------------------------------------sehat---------------------------------------
-/*/
-int sehat(int y1, int x1, int y2, int x2, int k){
-    if(y1 > y2){
-        int temp = y2;
-        y2 = y1;
-        y1 = temp;
-    }
-    if(x1 > x2){
-        int temp = x1;
-        x1 = x2;
-        x2 = temp;
-    }
-    for (int j = y1; j < y2; j++){
-        for (int i = x1; i < x2; i++){
-            if (cell.pixel[k][j + 1][i].previous != '#' || cell.pixel[k][j][i - 1].previous != '#' ||
-                cell.pixel[k][j - 1][i].previous != '#' || cell.pixel[k][j][i + 1].previous != '#'){
-                    return 0;
-            }
-        }
-    }
-    return 1;
-}
-/*/
+
 //------------------------------------------show----------------------------------------
 
 int mahdood_room(int y, int x, int k){
@@ -129,8 +115,15 @@ int mahdood_room(int y, int x, int k){
 
     for(int j = 0; j < 37; j++){
         for(int i = 0; i < 153; i++){
+            attron(COLOR_PAIR(1));
             if(cell.pixel[k][j][i].namayesh == 1){
                 mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+            }
+            if(cell.pixel[k][j][i].font == '@'){
+                attron(COLOR_PAIR(herocolor));
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                attroff(COLOR_PAIR(herocolor));
+                attron(COLOR_PAIR(1));
             }
         }
     }
@@ -139,6 +132,12 @@ int mahdood_room(int y, int x, int k){
         for(int i = n1; i <= n2; i++){
             if(cell.pixel[k][j][i].previous != '#' && cell.pixel[k][j][i].previous != '^'){
                 mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                if(cell.pixel[k][j][i].font == '@'){
+                    attron(COLOR_PAIR(herocolor));
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                    attroff(COLOR_PAIR(herocolor));
+                    attron(COLOR_PAIR(1));
+                }
                 cell.pixel[k][j][i].namayesh = 1;
                 if(cell.pixel[k][j][i].previous == '+'){
                     cell.pixel[k][j][i].check = 1;
@@ -147,6 +146,12 @@ int mahdood_room(int y, int x, int k){
             if (cell.pixel[k][j][i].previous == '^'){
                 mvprintw(j, i, ".");
                 cell.pixel[k][j][i].namayesh = 1;
+            }
+            if(cell.pixel[k][j][i].font == '@'){
+                attron(COLOR_PAIR(herocolor));
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                attroff(COLOR_PAIR(herocolor));
+                attron(COLOR_PAIR(1));
             }
         }
     }
@@ -213,8 +218,10 @@ int key(int y, int x, char c, int k){
             }
             y = y + 1;
             x = x - 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-            //cell.pixel[k][y][x].namayesh = 1;
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '2'){
@@ -233,8 +240,10 @@ int key(int y, int x, char c, int k){
             
             y = y + 1;
             x = x;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-            //cell.pixel[k][y][x].namayesh = 1;
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '3'){
@@ -252,8 +261,10 @@ int key(int y, int x, char c, int k){
             }
             y = y + 1;
             x = x + 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-            //cell.pixel[k][y][x].namayesh = 1;
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '4'){
@@ -271,8 +282,10 @@ int key(int y, int x, char c, int k){
             }
             y = y;
             x = x - 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-            //cell.pixel[k][y][x].namayesh = 1;
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '6'){
@@ -291,8 +304,10 @@ int key(int y, int x, char c, int k){
             
             y = y;
             x = x + 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-            //cell.pixel[k][y][x].namayesh = 1;
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '7'){
@@ -310,8 +325,10 @@ int key(int y, int x, char c, int k){
             }
             y = y - 1;
             x = x - 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-            //cell.pixel[k][y][x].namayesh = 1;
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(4));
         }
     }
     else if(c == '8'){
@@ -330,8 +347,10 @@ int key(int y, int x, char c, int k){
             
             y = y - 1;
             x = x;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-            //cell.pixel[k][y][x].namayesh = 1;
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '9'){
@@ -350,8 +369,10 @@ int key(int y, int x, char c, int k){
             
             y = y - 1;
             x = x + 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-            //cell.pixel[k][y][x].namayesh = 1;
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == 'S'){
@@ -658,12 +679,13 @@ int key(int y, int x, char c, int k){
         f = getch();
         move(37, 152);
         if(f == '5'){
-            if ((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6)    
+            if ((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){    
                 cell.pixel[k][y][x].previous = '.';
                 cell.mainfood++;
             }
-        else{
-            mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
+            else{
+                mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
+            }
         }
     }
     if(cell.pixel[k][y][x].previous == 'm'){
@@ -684,13 +706,13 @@ int key(int y, int x, char c, int k){
         f = getch();
         move(37, 152);
         if(f == '5' && (cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){
-            if ((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6)
+            if ((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){
                 cell.pixel[k][y][x].previous = '.';
                 cell.foodperfect++;
-                //f = getch();
             }
-        else{
-            mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
+            else{
+                mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
+            }
         }
     }
     if(cell.pixel[k][y][x].previous == '<'){
@@ -755,7 +777,7 @@ int key(int y, int x, char c, int k){
         key(75, 20, c, k);
     }
     mvprintw(34, 10, "GOLD: %d", cell.gold);
-    mvprintw(34, 18, "Health: %d", cell.health);
+    mvprintw(34, 40, "Health: %d", cell.health);
     move(37, 152);
     key(y, x, c, k);
     return 1;
@@ -1784,13 +1806,13 @@ int Settings(){
     mvprintw(6, 58, "SETTINGS MENUE!!!");
     attroff(COLOR_PAIR(4));
     attron(COLOR_PAIR(1));
-    mvprintw(11, 60, "Choose deficulty:\n");
+    mvprintw(11, 60, "Choose defficulty:\n");
     mvprintw(13, 65, "Easy\n");
     mvprintw(15, 65, "Normal\n");
     mvprintw(17, 65, "Hard\n");
     mvprintw(19, 60, "Choose color of hero:");
-    mvprintw(21, 65, "Red\n");
-    mvprintw(23, 65, "Yellow\n");
+    mvprintw(21, 65, "Blue\n");
+    mvprintw(23, 65, "Gold\n");
     mvprintw(25, 65, "White\n");
     mvprintw(27, 65, "Cyan\n");
     attroff(COLOR_PAIR(1));
@@ -1802,103 +1824,207 @@ int Settings(){
     noecho();
     char c = getch();
     int number = 0;
-    while(c != 10){
-        if(c == 65){
-            mvprintw(13 + 2 * number, 61, "  ");
-            number = ((number + 7) %8);
-            if(13 + 2 * number == 19){
-                number--;
+    do{
+        while(c != '5'){
+            if(c == 65){
+                mvprintw(13 + 2 * number, 61, "  ");
+                number = ((number + 7) %8);
+                if(13 + 2 * number == 19){
+                    number--;
+                }
+                mvprintw(13 + 2 * number, 61, "**");
             }
-            mvprintw(13 + 2 * number, 61, "**");
+            else if(c == 66){
+                mvprintw(13 + 2 * number, 61, "  ");
+                number = (number + 1) % 8;
+                if(13 + 2 * number == 19){
+                    number++;
+                }
+                mvprintw(13 + 2 * number, 61, "**");
+            }
+            c = getch();
         }
-        else if(c == 66){
-            mvprintw(13 + 2 * number, 61, "  ");
-            number = (number + 1) % 8;
-            if(13 + 2 * number == 19){
-                number++;
-            }
-            mvprintw(13 + 2 * number, 61, "**");
+        number++;
+        if(number == 1){
+            cell.health = 100;
+        }
+        if(number == 2){
+            cell.health = 75;
+        }
+        if(number == 3){
+            cell.health = 50;
+        }
+        if(number == 5){
+            herocolor = 7;
+        }
+        if(number == 6){
+            herocolor = 5;
+        }
+        if(number == 7){
+            herocolor = 3;
+        }
+        if(number == 8){
+            herocolor = 4;
         }
         c = getch();
-    }
-    number++;
+    }while(c != 'R');
+    mvprintw(33, 60, "Difficulty changed");
+    mvprintw(33, 90, "%d", number);
+    getch();
     attroff(COLOR_PAIR(4));
+    Login();
 }
 //-------------------------------------------------scoreboard----------------------------------------------
 
 int Scoreboard(){
-    clear();
-    attron(COLOR_PAIR(2));
-    mvprintw(5, 54, "R O G U E    G A M E");
-    attroff(COLOR_PAIR(2));
-    attron(COLOR_PAIR(4));
-    mvprintw(6, 58, "SCOREBOARD!!!");
-
     int i,j;
     pix temp;
     score userscore[100];
     score tempscore;
     FILE *fptr;
 
-    i = 0;
+    int count = 0;
     fptr = (fopen("usersinfo.dat","rb"));
     
     fread(&temp, sizeof(temp), 1, fptr);
     while(!feof(fptr)){        
-        userscore[i].exp = temp.exp;
-        userscore[i].gold = temp.gold;
-        userscore[i].score = temp.score;
-        strcpy(userscore[i].name , temp.name);
-        i++;       
+        userscore[count].exp = temp.exp;
+        userscore[count].gold = temp.gold;
+        userscore[count].score = temp.score;
+        strcpy(userscore[count].name , temp.name);
+        count++;       
                
         fread(&temp, sizeof(temp), 1, fptr);    
     }
-    attroff(COLOR_PAIR(4));
-    attron(A_BOLD);
-    mvprintw(8, 15, "Username:");
-    mvprintw(8, 50, "Gold:");
-    mvprintw(8, 85, "Experience:");
-    mvprintw(8, 120, "Score:");
-    attroff(A_BOLD);
-    int number = 0;
-    
-    for (i = 9; i > 0 ; --i){
+    for (i = 99; i > 0 ; --i){
         for (j = 0; j < i; ++j){
             if (userscore[j].score < userscore[j+1].score){ 
                 tempscore = userscore[j];
                 userscore[j] = userscore[j+1];
                 userscore[j+1] = tempscore;
-    
             }
-       }    
+        }    
     }
-
-    attron(COLOR_PAIR(3));
-    for(int i = 0; i < 10; i++){
-        mvprintw(10 + i * 2, 17, "%s", userscore[i].name);
-    }
-    for(int i = 0; i < 10; i++){
-        mvprintw(10 + i * 2, 52, "%d", userscore[i].gold);
-    }
-    for(int i = 0; i < 10; i++){
-        mvprintw(10 + i * 2, 87, "%d", userscore[i].exp);
-    }
-    for(int i = 0; i < 10; i++){
-        mvprintw(10 + i * 2, 122, "%d", userscore[i].score);
-    }
-    attroff(COLOR_PAIR(3));
-    /*
-    for(int i = 0; i < 10; i++){
-        if(!strcmp(userscore[i].name, cell.name)){
-            for(int j = 0)
-        }
-    }
-    */
-
     fclose(fptr);
-    
+    char s;
+    int p = 0;
+    int number = 0;
+    do{
+        clear();
+        attron(COLOR_PAIR(2));
+        mvprintw(5, 54, "R O G U E    G A M E");
+        attroff(COLOR_PAIR(2));
+        attron(COLOR_PAIR(4));
+        mvprintw(6, 58, "SCOREBOARD!!!");
+        attroff(COLOR_PAIR(4));
+        attron(A_BOLD);
+        mvprintw(8, 15, "Username:");
+        mvprintw(8, 50, "Gold:");
+        mvprintw(8, 85, "Experience:");
+        mvprintw(8, 120, "Score:");
+        attroff(A_BOLD);
 
-
+        attron(COLOR_PAIR(3));
+        if (s == 65){
+            number--;
+        }
+        if(s == 66){
+            number++;
+        }
+        if(number >= 0){
+            for(int i = 0; i < 10; i++){
+                if(i + 10 * number < count){
+                    if (i + 10 * number == 0){
+                        attron(A_BOLD);
+                        attron(COLOR_PAIR(5));
+                        mvprintw(10, 5, "GOAT ->");
+                        mvprintw((10 + i * 2), 13, "%d.", number * 10 + i + 1);
+                        mvprintw(10 + i * 2, 17, "%s                               ", userscore[i + 10 * number].name);
+                            if(!strcmp(userscore[i + 10 * number].name, cell.name)){
+                            for(int j = 0; j < 152; j++){
+                                mvprintw((9 + i * 2), j, "-");
+                                mvprintw((11 + i * 2), j, "-");
+                            }
+                        }
+                        attroff(COLOR_PAIR(5));
+                        attron(COLOR_PAIR(3));
+                        attroff(A_BOLD);
+                    }
+                    else if (i + 10 * number == 1){
+                        attron(A_BOLD);
+                        attron(COLOR_PAIR(7));
+                        mvprintw(12, 5, "KING ->");
+                        mvprintw((10 + i * 2), 13, "%d.", number * 10 + i + 1);
+                        mvprintw(10 + i * 2, 17, "%s                               ", userscore[i + 10 * number].name);
+                        if(!strcmp(userscore[i + 10 * number].name, cell.name)){
+                            for(int j = 0; j < 152; j++){
+                                mvprintw((9 + i * 2), j, "-");
+                                mvprintw((11 + i * 2), j, "-");
+                            }
+                        }
+                        attroff(COLOR_PAIR(7));
+                        attron(COLOR_PAIR(3));
+                        attroff(A_BOLD);
+                    }
+                    else if (i + 10 * number == 2){
+                        attron(A_BOLD);
+                        attron(COLOR_PAIR(8));
+                        mvprintw(14, 5, "BOSS ->");
+                        mvprintw((10 + i * 2), 13, "%d.", number * 10 + i + 1);
+                        mvprintw(10 + i * 2, 17, "%s                               ", userscore[i + 10 * number].name);
+                        if(!strcmp(userscore[i + 10 * number].name, cell.name)){
+                            for(int j = 0; j < 152; j++){
+                                mvprintw((9 + i * 2), j, "-");
+                                mvprintw((11 + i * 2), j, "-");
+                            }
+                        }
+                        attroff(COLOR_PAIR(8));
+                        attron(COLOR_PAIR(3));
+                        attroff(A_BOLD);
+                    }
+                    else{
+                        mvprintw((10 + i * 2), 13, "%d.", number * 10 + i + 1);
+                        mvprintw(10 + i * 2, 17, "%s                               ", userscore[i + 10 * number].name);
+                        if(!strcmp(userscore[i + 10 * number].name, cell.name)){
+                            for(int j = 0; j < 152; j++){
+                                mvprintw((9 + i * 2), j, "-");
+                                mvprintw((11 + i * 2), j, "-");
+                            }
+                        }
+                    }
+                }
+                else{
+                    mvprintw(10 + i * 2, 13, "                                      ");
+                }
+            }
+            for(int i = 0; i < 10; i++){
+                if(i + 10 * number < count){
+                    mvprintw(10 + i * 2, 52, "%d                 ", userscore[i + 10 * number].gold);
+                }
+                else
+                    mvprintw(10 + i * 2, 52, "                     ");
+            }
+            for(int i = 0; i < 10; i++){
+                if(i + 10 * number < count){
+                    mvprintw(10 + i * 2, 87, "%d                   ", userscore[i + 10 * number].exp);
+                }
+                else
+                    mvprintw(10 + i * 2, 87, "                     ");
+            }
+            for(int i = 0; i < 10; i++){
+                if(i + 10 * number < count){
+                    mvprintw(10 + i * 2, 122, "%d                   ", userscore[i + 10 * number].score);
+                }
+                else
+                    mvprintw(10 + i * 2, 122, "                     ");
+            }
+        }
+        if(number >= count / 10){
+            mvprintw(33, 50, "End of the list!");
+        }
+        s = getch();
+    }while(s != 'R');
+    attroff(COLOR_PAIR(3));
     attroff(COLOR_PAIR(4));
     getch();
 }
@@ -2035,10 +2161,17 @@ int main(){
         clear();
         start_color();
         init_color(COLOR_BLACK, 100, 100, 100);
+        init_color(COLOR_GOLD, 1000, 843, 0);
+        init_color(COLOR_SILVER, 900, 900, 900);
+        init_color(COLOR_BORONZE, 804, 498, 796);
         init_pair(1, COLOR_YELLOW, COLOR_BLACK);
         init_pair(2, COLOR_RED, COLOR_BLACK);
         init_pair(3, COLOR_WHITE, COLOR_BLACK);
         init_pair(4, COLOR_CYAN, COLOR_BLACK);
+        init_pair(5, COLOR_GOLD, COLOR_BLACK);
+        init_pair(6, COLOR_SILVER, COLOR_BLACK);
+        init_pair(7, COLOR_BLUE, COLOR_BLACK);
+        init_pair(8, COLOR_BORONZE, COLOR_BLACK);
         bkgd(COLOR_PAIR(1));
         attron(A_BOLD);
         attron(COLOR_PAIR(2));
