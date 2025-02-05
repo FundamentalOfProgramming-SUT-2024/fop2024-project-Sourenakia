@@ -43,6 +43,7 @@ pix cell;
 int M = 0;
 int testkey = 0;
 int herocolor = 1;
+int goldx1 = 0, goldx2 = 0, goldy1 = 0, goldy2 = 0; 
 
 int Login();
  
@@ -82,6 +83,20 @@ void update_screen(int k){
             }
 		}
 	}
+    if (k == 3){
+        attron(COLOR_PAIR(5));
+        for(int j = goldy1; j <= goldy2; j++){
+            for(int i = goldx1; i <= goldx2; i++){
+                if(cell.pixel[3][j][i].font != '^')
+                    mvprintw(j, i, "%c", cell.pixel[3][j][i].font);
+                else{
+                    mvprintw(j, i, ".");
+                }
+            }
+        }
+        attroff(COLOR_PAIR(5));
+        attron(COLOR_PAIR(1));
+    }
 }
 
 //------------------------------------------show----------------------------------------
@@ -155,6 +170,22 @@ int mahdood_room(int y, int x, int k){
             }
         }
     }
+    if (k == 3){
+        if((x <= goldx2 && x >= goldx1) && (y <= goldy2 && y >= goldy1)){
+            attron(COLOR_PAIR(5));
+            for(int j = goldy1; j <= goldy2; j++){
+                for(int i = goldx1; i <= goldx2; i++){
+                    if(cell.pixel[3][j][i].font != '^')
+                        mvprintw(j, i, "%c", cell.pixel[3][j][i].font);
+                    else{
+                        mvprintw(j, i, ".");
+                    }
+                }
+            }
+            attroff(COLOR_PAIR(5));
+            attron(COLOR_PAIR(1));
+        }
+    }
     move(37, 152);
 }
 
@@ -201,8 +232,12 @@ int key(int y, int x, char c, int k){
     noecho();
     mvprintw(1, 1, "                                                                         ");
     move(37, 152);
-
-
+    if (k == 3 && (x >= goldx1 && x <= goldx2) && (y >= goldy1 && y < goldy2)){
+        attron(COLOR_PAIR(5));
+    }
+    else{
+        attron(COLOR_PAIR(1));
+    }
     if(c == '1'){
         if (cell.pixel[k][y + 1][x - 1].flag != 0 && cell.pixel[k][y + 1][x - 1].font != '|' &&
             cell.pixel[k][y + 1][x - 1].font != '-' && cell.pixel[k][y + 1][x - 1].font != 'O'){
@@ -587,6 +622,22 @@ int key(int y, int x, char c, int k){
         c = getch();
         key(y, x, c, k);
     }
+    if (k == 3){
+        if((x <= goldx2 && x >= goldx1) && (y <= goldy2 && y >= goldy1)){
+            attron(COLOR_PAIR(5));
+            for(int j = goldy1; j <= goldy2; j++){
+                for(int i = goldx1; i <= goldx2; i++){
+                    if(cell.pixel[3][j][i].font != '^')
+                        mvprintw(j, i, "%c", cell.pixel[3][j][i].font);
+                    else{
+                        mvprintw(j, i, ".");
+                    }
+                }
+            }
+            attroff(COLOR_PAIR(5));
+            attron(COLOR_PAIR(1));
+        }
+    }
 //-------------------------------------------------------------------------------------- 
     
     
@@ -751,6 +802,7 @@ int key(int y, int x, char c, int k){
     
     move(37, 152);
     if(cell.pixel[k][y][x].previous == '^'){
+        attron(COLOR_PAIR(1));
         for(int i = 0; i < 38; i++){
             for(int j = 0; j < 153; j++){
                 mvprintw(i, j, " ");
@@ -774,12 +826,14 @@ int key(int y, int x, char c, int k){
 		    }
     	}
         mvprintw(34, 10, "GOLd: %d", cell.gold);
+        attroff(COLOR_PAIR(1));
         key(75, 20, c, k);
     }
     mvprintw(34, 10, "GOLD: %d", cell.gold);
     mvprintw(34, 40, "Health: %d", cell.health);
     mvprintw(1, 100, "floo %d", k);
     move(37, 152);
+    attroff(COLOR_PAIR(4));
     key(y, x, c, k);
     return 1;
 }
@@ -1343,7 +1397,10 @@ int gold_room(int y, int x){
             }
         }
     }
-    
+    goldx1 = n1;
+    goldx2 = n2;
+    goldy1 = m1;
+    goldy2 = m2;
 }
 
 
