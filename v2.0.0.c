@@ -3,13 +3,18 @@
 #include<string.h>
 #include<stdlib.h>
 #include<time.h>
-
+#define COLOR_GOLD 8
+#define COLOR_SILVER 9
+#define COLOR_BORONZE 10
 
 
 typedef struct{
 	int color;
 	char font, location, previous;
     int flag;
+    int check;
+    int namayesh;
+    int healthy;
 }mainpixel;
 
 
@@ -20,14 +25,40 @@ typedef struct{
     char email[40];
     int floor;
     int gold;
+    int thealthy, tspeed, tdamage;
+    int tir, gorz, khanjar, asa, shamshir, foodmajic, foodperfect, mainfood;
+    int health, score, exp, gorosneh; 
 }pix;
 
-pix cell;
+typedef struct{
+    char name[40];
+    int gold, exp, score;
+}score;
 
+
+
+int Main_game(int k);
+
+pix cell;
+int M = 0;
+int testkey = 0;
+int herocolor = 1;
+int goldx1 = 0, goldx2 = 0, goldy1 = 0, goldy2 = 0; 
+int telesmx1, telesmx2, telesmy1, telesmy2;
+time_t start_time;
+time_t end_time;
 
 int Login();
-int thealthy = 0, tspeed = 0, tdamage = 0;
-int tir = 0, gorz = 0, khanjar = 0, asa = 0, shamshir = 0, food = 0; 
+ 
+
+int ghadr(int x, int y){
+    int a = x - y;
+    if (a < 0){
+        a = a * -1;
+    }
+    return a;
+}
+
 
 int Random_number(int a, int b){
     int randomnumber = rand();
@@ -47,26 +78,225 @@ void update_screen(int k){
             else{
                 mvprintw(j, i, ".");
             }
+            if(cell.pixel[k][j][i].font == '@'){
+                attron(COLOR_PAIR(herocolor));
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                attroff(COLOR_PAIR(herocolor));
+                attron(COLOR_PAIR(1));
+            }
 		}
 	}
+    if (k == 3){
+        attron(COLOR_PAIR(5));
+        for(int j = goldy1; j <= goldy2; j++){
+            for(int i = goldx1; i <= goldx2; i++){
+                if(cell.pixel[3][j][i].font != '^')
+                    mvprintw(j, i, "%c", cell.pixel[3][j][i].font);
+                else{
+                    mvprintw(j, i, ".");
+                }
+            }
+        }
+        attroff(COLOR_PAIR(5));
+        attron(COLOR_PAIR(1));
+    }
+    if (k > 0){
+        attron(COLOR_PAIR(8));
+        for(int j = telesmy1; j <= telesmy2; j++){
+            for(int i = telesmx1; i <= telesmx2; i++){
+                if(cell.pixel[k][j][i].font != '^')
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                else{
+                    mvprintw(j, i, ".");
+                }
+            }
+        }
+        attroff(COLOR_PAIR(8));
+        attron(COLOR_PAIR(1));
+    }
 }
 
+//------------------------------------------show----------------------------------------
+
+int mahdood_room(int y, int x, int k){
+    int m1 = y, n1 = x, m2 = y, n2 = x;
+    for(int j = y; j < 37; j++){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+            m2 = j;
+            break;
+        }
+    }
+    for(int j = y; j > 0; j--){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+            m1 = j;
+            break;
+        }
+    }
+    for(int i = x; i < 153; i++){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+            n2 = i;
+            break;
+        }
+    }
+    for(int i = x; i > 0; i--){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+            n1 = i;
+            break;
+        }
+    }
+
+    for(int j = 0; j < 37; j++){
+        for(int i = 0; i < 153; i++){
+            attron(COLOR_PAIR(1));
+            if(cell.pixel[k][j][i].namayesh == 1){
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+            }
+            if(cell.pixel[k][j][i].font == '@'){
+                attron(COLOR_PAIR(herocolor));
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                attroff(COLOR_PAIR(herocolor));
+                attron(COLOR_PAIR(1));
+            }
+        }
+    }
+
+    for(int j = m1; j <= m2; j++){
+        for(int i = n1; i <= n2; i++){
+            if(cell.pixel[k][j][i].previous != '#' && cell.pixel[k][j][i].previous != '^'){
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                if(cell.pixel[k][j][i].font == '@'){
+                    attron(COLOR_PAIR(herocolor));
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                    attroff(COLOR_PAIR(herocolor));
+                    attron(COLOR_PAIR(1));
+                }
+                cell.pixel[k][j][i].namayesh = 1;
+                if(cell.pixel[k][j][i].previous == '+'){
+                    cell.pixel[k][j][i].check = 1;
+                }
+            }
+            if (cell.pixel[k][j][i].previous == '^'){
+                mvprintw(j, i, ".");
+                cell.pixel[k][j][i].namayesh = 1;
+            }
+            if(cell.pixel[k][j][i].font == '@'){
+                attron(COLOR_PAIR(herocolor));
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                attroff(COLOR_PAIR(herocolor));
+                attron(COLOR_PAIR(1));
+            }
+        }
+    }
+    if (k == 3){
+        if((x <= goldx2 && x >= goldx1) && (y <= goldy2 && y >= goldy1)){
+            attron(COLOR_PAIR(5));
+            for(int j = goldy1; j <= goldy2; j++){
+                for(int i = goldx1; i <= goldx2; i++){
+                    if(cell.pixel[3][j][i].font != '^')
+                        mvprintw(j, i, "%c", cell.pixel[3][j][i].font);
+                    else{
+                        mvprintw(j, i, ".");
+                    }
+                }
+            }
+            attroff(COLOR_PAIR(5));
+            attron(COLOR_PAIR(1));
+        }
+    }
+    if (k > 0){
+        attron(COLOR_PAIR(8));
+        for(int j = telesmy1; j <= telesmy2; j++){
+            for(int i = telesmx1; i <= telesmx2; i++){
+                if(cell.pixel[k][j][i].font != '^')
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                else{
+                    mvprintw(j, i, ".");
+                }
+            }
+        }
+        attroff(COLOR_PAIR(8));
+        attron(COLOR_PAIR(1));
+    }
+    move(37, 152);
+}
+
+//----------------------------------------------------rahroh--------------------------
+int Rahroh_mahdood(int y, int x, int k){
+    if(cell.pixel[k][y + 1][x].font == '+' || cell.pixel[k][y + 1][x].font == '#'){
+        mvprintw(y + 1, x, "%c", cell.pixel[k][y + 1][x].font);
+        cell.pixel[k][y + 1][x].namayesh = 1;
+    }
+    if(cell.pixel[k][y + 1][x + 1].font == '+' || cell.pixel[k][y + 1][x + 1].font == '#'){
+        mvprintw(y + 1, x + 1, "%c", cell.pixel[k][y + 1][x + 1].font);
+        cell.pixel[k][y + 1][x + 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y + 1][x - 1].font == '+' || cell.pixel[k][y + 1][x - 1].font == '#'){
+        mvprintw(y + 1, x - 1, "%c", cell.pixel[k][y + 1][x - 1].font);
+        cell.pixel[k][y + 1][x - 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y - 1][x - 1].font == '+' || cell.pixel[k][y - 1][x - 1].font == '#'){
+        mvprintw(y - 1, x - 1, "%c", cell.pixel[k][y - 1][x - 1].font);
+        cell.pixel[k][y - 1][x - 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y - 1][x].font == '+' || cell.pixel[k][y - 1][x].font == '#'){
+        mvprintw(y - 1, x, "%c", cell.pixel[k][y - 1][x].font);
+        cell.pixel[k][y - 1][x].namayesh = 1;
+    }
+    if(cell.pixel[k][y - 1][x + 1].font == '+' || cell.pixel[k][y - 1][x + 1].font == '#'){
+        mvprintw(y - 1, x + 1, "%c", cell.pixel[k][y - 1][x + 1].font);
+        cell.pixel[k][y - 1][x + 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y][x + 1].font == '+' || cell.pixel[k][y][x + 1].font == '#'){
+        mvprintw(y, x + 1, "%c", cell.pixel[k][y][x + 1].font);
+        cell.pixel[k][y][x + 1].namayesh = 1;
+    }
+    if(cell.pixel[k][y][x - 1].font == '+' || cell.pixel[k][y][x - 1].font == '#'){
+        mvprintw(y, x - 1, "%c", cell.pixel[k][y][x - 1].font);
+        cell.pixel[k][y][x - 1].namayesh = 1;
+    }
+    move(37, 152);
+}
 //-------------------------------------------KEY----------------------------------------
 
 int key(int y, int x, char c, int k){
+    end_time = time(NULL);
+    if (end_time - start_time > 2){
+        cell.gorosneh++;
+        start_time = time(NULL);
+        end_time = time(NULL);
+    }
     move(37, 152);
     noecho();
     mvprintw(1, 1, "                                                                         ");
     move(37, 152);
+    if (k == 3 && (x >= goldx1 && x <= goldx2) && (y >= goldy1 && y < goldy2)){
+        attron(COLOR_PAIR(5));
+    }
+    if (k > 0 && (x >= telesmx1 && x <= telesmx2) && (y >= telesmy1 && y < telesmy2)){
+        attron(COLOR_PAIR(8));
+    }
+    else{
+        attron(COLOR_PAIR(1));
+    }
     if(c == '1'){
         if (cell.pixel[k][y + 1][x - 1].flag != 0 && cell.pixel[k][y + 1][x - 1].font != '|' &&
             cell.pixel[k][y + 1][x - 1].font != '-' && cell.pixel[k][y + 1][x - 1].font != 'O'){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y + 1][x - 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
+            //cell.pixel[k][y][x].namayesh = 1;
+            if (cell.pixel[k][y + 1][x - 1].previous == '+' && cell.pixel[k][y + 1][x - 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y + 1][x - 1].check = 1;
+                    mahdood_room(y + 1, x - 2, k);
+                    mvprintw(1, 1, "New Room!");
+            }
             y = y + 1;
             x = x - 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '2'){
@@ -75,9 +305,20 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y + 1][x].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
+            //cell.pixel[k][y][x].namayesh = 1;
+            if (cell.pixel[k][y + 1][x].previous == '+' && cell.pixel[k][y + 1][x].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y + 1][x].check = 1;
+                    mahdood_room(y + 2, x, k);
+                    mvprintw(1, 1, "New Room!");
+            }
+            
             y = y + 1;
             x = x;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '3'){
@@ -86,9 +327,19 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y + 1][x + 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
+            //cell.pixel[k][y][x].namayesh = 1;
+            if (cell.pixel[k][y + 1][x + 1].previous == '+' && cell.pixel[k][y + 1][x + 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y + 1][x + 1].check = 1;
+                    mahdood_room(y + 1, x + 2, k);
+                    mvprintw(1, 1, "New Room!");
+            }
             y = y + 1;
             x = x + 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '4'){
@@ -97,10 +348,19 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y][x - 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
+            //cell.pixel[k][y][x].namayesh = 1;
+            if (cell.pixel[k][y][x - 1].previous == '+' && cell.pixel[k][y][x - 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y][x - 1].check = 1;
+                    mahdood_room(y, x - 2, k);
+                    mvprintw(1, 1, "New Room!");
+            }
             y = y;
             x = x - 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
- 
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '6'){
@@ -109,9 +369,20 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y][x + 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
+            //cell.pixel[k][y][x].namayesh = 1;
+            if (cell.pixel[k][y][x + 1].previous == '+' && cell.pixel[k][y][x + 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y][x + 1].check = 1;
+                    mahdood_room(y, x + 2, k);
+                    mvprintw(1, 1, "New Room!");
+            }
+            
             y = y;
             x = x + 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '7'){
@@ -120,9 +391,19 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y - 1][x - 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
+            //cell.pixel[k][y][x].namayesh = 1;
+            if (cell.pixel[k][y - 1][x - 1].previous == '+' && cell.pixel[k][y - 1][x - 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y - 1][x - 1].check = 1;
+                    mahdood_room(y - 1, x - 2, k);
+                    mvprintw(1, 1, "New Room!");
+            }
             y = y - 1;
             x = x - 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(4));
         }
     }
     else if(c == '8'){
@@ -131,9 +412,20 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y - 1][x].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
+            //cell.pixel[k][y][x].namayesh = 1;
+            if (cell.pixel[k][y - 1][x].previous == '+' && cell.pixel[k][y - 1][x].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y - 1][x].check = 1;
+                    mahdood_room(y - 2, x, k);
+                    mvprintw(1, 1, "New Room!");
+            }
+            
             y = y - 1;
             x = x;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
         }
     }
     else if(c == '9'){
@@ -142,16 +434,287 @@ int key(int y, int x, char c, int k){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
             cell.pixel[k][y - 1][x + 1].font = '@';
             mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
+            //cell.pixel[k][y][x].namayesh = 1;
+            if (cell.pixel[k][y - 1][x + 1].previous == '+' && cell.pixel[k][y - 1][x + 1].check == 0 && 
+                cell.pixel[k][y][x].previous == '#'){
+                    cell.pixel[k][y - 1][x + 1].check = 1;
+                    mahdood_room(y - 1, x + 2, k);
+                    mvprintw(1, 1, "New Room!");
+            }
+            
             y = y - 1;
             x = x + 1;
+            attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
+            attroff(COLOR_PAIR(herocolor));
+            attron(COLOR_PAIR(1));
+        }
+    }
+    else if(c == 'S'){
+        int number = 0;
+        char s;
+        clear();
+        attron(COLOR_PAIR(2));
+        mvprintw(5, 54, "R O G U E    G A M E");
+        attroff(COLOR_PAIR(2));
+        attron(COLOR_PAIR(4));
+        mvprintw(6, 58, "SPELL MENUE!!!");
+        attroff(COLOR_PAIR(4));
+        mvprintw(8, 30, "Spells name:");
+        mvprintw(8, 90, "Spells number:");
+        mvprintw(10, 34, "Health spell");
+        mvprintw(10, 94, "%d", cell.thealthy);
+        mvprintw(12, 34, "Damage spell");
+        mvprintw(12, 94, "%d", cell.tdamage);
+        mvprintw(14, 34, "Speed spell");
+        mvprintw(14, 94, "%d", cell.tspeed);
+        mvprintw(33, 54, "Press R to resume the game!");    
+        while(s != 'R'){
+        attron(COLOR_PAIR(4));
+        mvprintw(2 * number + 10, 30, "**");
+        noecho();
+            if(s == 65){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = ((number + 2) % 3);
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == 66){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = (number + 1) % 3;
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == '5'){
+                attroff(COLOR_PAIR(4));
+                if(number == 0 && cell.thealthy > 0){
+                    cell.thealthy--;
+                    mvprintw(10, 94, "%d", cell.thealthy);
+                }
+                if(number == 1 && cell.tdamage > 0){
+                    cell.tdamage--;
+                    mvprintw(12, 94, "%d", cell.tdamage);
+                }
+                if(number == 2 && cell.tspeed > 0){
+                    cell.tspeed--;
+                    mvprintw(14, 94, "%d", cell.tspeed);
+                }
+            }
+            move(37, 152);
+            attroff(COLOR_PAIR(4));
+            s = getch();
+        }
+        for(int j = 0; j < 38; j++){
+            for(int i = 0; i < 153; i++){
+                mvprintw(j, i, " ");
+                if (cell.pixel[k][j][i].namayesh == 1){
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                }
+            }
+        }
+        c = getch();
+        key(y, x, c, k);
+    }
+    
+    else if(c == 'i'){
+        int number = 0;
+        char s;
+        clear();
+        attron(COLOR_PAIR(2));
+        mvprintw(5, 54, "R O G U E    G A M E");
+        attroff(COLOR_PAIR(2));
+        attron(COLOR_PAIR(4));
+        mvprintw(6, 58, "SPELL MENUE!!!");
+        attroff(COLOR_PAIR(4));
+        mvprintw(8, 30, "WEAPON name:");
+        mvprintw(8, 90, "Weapon number:");
+        mvprintw(10, 34, "Mace");
+        mvprintw(10, 94, "%d", cell.gorz);
+        mvprintw(12, 34, "Dagger");
+        mvprintw(12, 94, "%d", cell.khanjar);
+        mvprintw(14, 34, "Majic Wand");
+        mvprintw(14, 94, "%d", cell.asa);
+        mvprintw(16, 34, "Normal Arrow");
+        mvprintw(16, 94, "%d", cell.tir);
+        mvprintw(18, 34, "Sword");
+        mvprintw(18, 94, "%d", cell.shamshir);
+        mvprintw(33, 54, "Press enter to resume the game!");
+        while(s != 'R'){
+        attron(COLOR_PAIR(4));
+        mvprintw(2 * number + 10, 30, "**");
+        noecho();
+            if(s == 65){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = ((number + 4) % 5);
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == 66){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = (number + 1) % 5;
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == '5'){
+                attroff(COLOR_PAIR(4));
+                if(number == 0 && cell.gorz > 0){
+                    cell.gorz--;
+                    mvprintw(10, 94, "%d", cell.gorz);
+                }
+                if(number == 1 && cell.khanjar > 0){
+                    cell.khanjar--;
+                    mvprintw(12, 94, "%d", cell.khanjar);
+                }
+                if(number == 2 && cell.asa > 0){
+                    cell.asa--;
+                    mvprintw(14, 94, "%d", cell.asa);
+                }
+                if(number == 3 && cell.tir > 0){
+                    cell.tir--;
+                    mvprintw(16, 94, "%d", cell.tir);
+                }
+                if(number == 4 && cell.shamshir > 0){
+                    cell.shamshir--;
+                    mvprintw(18, 94, "%d", cell.shamshir);
+                }
+            }
+            move(37, 152);
+            attroff(COLOR_PAIR(4));
+            s = getch();
+        }
+        for(int j = 0; j < 38; j++){
+            for(int i = 0; i < 153; i++){
+                mvprintw(j, i, " ");
+                if (cell.pixel[k][j][i].namayesh == 1){
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                }
+            }
+        }
+        c = getch();
+        key(y, x, c, k);
+    }
+
+    else if(c == 'E'){
+        int number = 0;
+        char s;
+        clear();
+        attron(COLOR_PAIR(2));
+        mvprintw(5, 54, "R O G U E    G A M E");
+        attroff(COLOR_PAIR(2));
+        attron(COLOR_PAIR(4));
+        mvprintw(6, 58, "FOODS MENUE!!!");
+        attroff(COLOR_PAIR(4));
+        mvprintw(8, 30, "Fodd name:");
+        mvprintw(8, 90, "food number:");
+        mvprintw(10, 34, "Normal food");
+        mvprintw(10, 94, "%d", cell.mainfood);
+        mvprintw(12, 34, "Majic food");
+        mvprintw(12, 94, "%d", cell.foodmajic);
+        mvprintw(14, 34, "Perfect food");
+        mvprintw(14, 94, "%d", cell.foodperfect);
+        mvprintw(33, 54, "Press enter to resume the game!");
+        mvprintw(32, 15, "                                                                                                                 ");
+        while(s != 'R'){
+        attron(COLOR_PAIR(4));
+        mvprintw(2 * number + 10, 30, "**");
+        noecho();
+            if(s == 65){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = ((number + 2) % 3);
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == 66){
+                mvprintw(10 + 2 * number, 30, "  ");
+                number = (number + 1) % 3;
+                mvprintw(10 + 2 * number, 30, "**");
+                attroff(COLOR_PAIR(4));
+            }
+            else if(s == '5'){
+                if (cell.gorosneh > 0){
+                    attroff(COLOR_PAIR(4));
+                    int te = 0;
+                    if(number == 0 && cell.mainfood > 0){
+                        te++;
+                        cell.mainfood--;
+                        cell.health++;
+                        mvprintw(10, 94, "%d", cell.mainfood);
+
+                    }
+                    if(number == 1 && cell.foodmajic > 0){
+                        te++;
+                        cell.foodmajic--;
+                        mvprintw(12, 94, "%d", cell.foodmajic);
+                        cell.health++;
+                    }
+                    if(number == 2 && cell.foodperfect > 0){
+                        te++;
+                        cell.foodperfect--;
+                        cell.health++;
+                        mvprintw(14, 94, "%d", cell.foodperfect);
+                    }
+                    if(te){
+                        cell.gorosneh -= 5;
+                        start_time = time(NULL);
+                        if(cell.gorosneh < 0){
+                            cell.gorosneh = 0;
+                        }
+                        if(cell.gorosneh > 100){
+                            cell.gorosneh = 100;
+                        }
+                    }
+                }
+                else{
+                    mvprintw(31, 60, "You are full");
+                }
+            }
+            attron(COLOR_PAIR(1));
+            mvprintw(32, 15, "                                                                                                                 ");
+            mvprintw(32, 15, "Hunger level [");
+            for(int i = 30; i < cell.gorosneh + 30; i++){
+                mvprintw(32, i, "#");
+            }
+            for(int i = cell.gorosneh + 30; i < 130; i++){
+                mvprintw(32, i, ".");
+            }
+            mvprintw(32, 130, "]");
+            move(37, 152);
+            attroff(COLOR_PAIR(4));
+            s = getch();
+        }
+        for(int j = 0; j < 38; j++){
+            for(int i = 0; i < 153; i++){
+                mvprintw(j, i, " ");
+                if (cell.pixel[k][j][i].namayesh == 1){
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                }
+            }
+        }
+        
+        c = getch();
+        key(y, x, c, k);
+    }
+    if (k == 3){
+        if((x <= goldx2 && x >= goldx1) && (y <= goldy2 && y >= goldy1)){
+            attron(COLOR_PAIR(5));
+            for(int j = goldy1; j <= goldy2; j++){
+                for(int i = goldx1; i <= goldx2; i++){
+                    if(cell.pixel[3][j][i].font != '^')
+                        mvprintw(j, i, "%c", cell.pixel[3][j][i].font);
+                    else{
+                        mvprintw(j, i, ".");
+                    }
+                }
+            }
+            attroff(COLOR_PAIR(5));
+            attron(COLOR_PAIR(1));
         }
     }
 //-------------------------------------------------------------------------------------- 
     
-    else if (c == 27) {
-        
-    return 1;
+    
+    else if(c == 27) {        
+       return 1;
    }
    
 //--------------------------------------------------------------------------------------
@@ -172,13 +735,13 @@ int key(int y, int x, char c, int k){
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
             if(cell.pixel[k][y][x].flag == 12){
-                thealthy++;
+                cell.thealthy++;
             }
             if(cell.pixel[k][y][x].flag == 13){
-                tdamage++;
+                cell.tdamage++;
             }
             if(cell.pixel[k][y][x].flag == 14){
-                tspeed++;
+                cell.tspeed++;
             }
       //      mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
         //    mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
@@ -189,12 +752,13 @@ int key(int y, int x, char c, int k){
       //      key_show(y, x, f, k);
        }
     }
+    cell.score = 2 * cell.gold;
     if(cell.pixel[k][y][x].previous == 'g'){
         f = getch();
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            gorz++;
+            cell.gorz++;
             //f = getch();
         }
     }
@@ -203,7 +767,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            tir++;
+            cell.tir++;
             //f = getch();
         }
     }
@@ -212,7 +776,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            asa++;
+            cell.asa++;
             //f = getch();
         }
     }
@@ -221,7 +785,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            shamshir++;
+            cell.shamshir++;
             //f = getch();
         }
     }
@@ -230,7 +794,7 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            khanjar++;
+            cell.khanjar++;
             //f = getch();
         }
     }
@@ -238,25 +802,79 @@ int key(int y, int x, char c, int k){
         f = getch();
         move(37, 152);
         if(f == '5'){
-            cell.pixel[k][y][x].previous = '.';
-            food++;
-            //f = getch();
+            if ((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){    
+                cell.pixel[k][y][x].previous = '.';
+                cell.mainfood++;
+            }
+            else{
+                mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
+            }
         }
     }
-    //mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-    //mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-    if (cell.pixel[k][y][x].previous == '+' && cell.pixel[k][y][x].previous == '#'){
-        mvprintw(1, 1, "New room!!!");
+    if(cell.pixel[k][y][x].previous == 'm'){
+        f = getch();
+        move(37, 152);
+        if(f == '5'){
+            if((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){
+                cell.pixel[k][y][x].previous = '.';
+                cell.foodmajic++;
+                //f = getch();
+            }
+            else{
+                mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
+            }
+        }
     }
+    if(cell.pixel[k][y][x].previous == 'm'){
+        f = getch();
+        move(37, 152);
+        if(f == '5' && (cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){
+            if ((cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){
+                cell.pixel[k][y][x].previous = '.';
+                cell.foodperfect++;
+            }
+            else{
+                mvprintw(1, 1, "You don't have enough espace in your backpack for new food");
+            }
+        }
+    }
+    if(cell.pixel[k][y][x].previous == '<'){
+        f = getch();
+        if(f == '5'){
+            Main_game(k + 1);
+        }
+    }
+
     move(37, 152);
-
-        /*/
-
- 
-    /*/   
+    int point = 1;
+    if(c == 'M'){
+        M++;
+        if(M % 2){
+            point = 1;
+            update_screen(k);
+        }
+        //right
+        else{
+            for(int j = 0; j < 38; j++){
+                for(int i = 0; i < 153; i++){
+                    mvprintw(j, i, " ");
+                    if (cell.pixel[k][j][i].namayesh == 1){
+                        mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                        //mvprintw(j, i, "1");
+                        point = 0;
+                    }
+                }
+            }
+        }
+        
+    }
+    Rahroh_mahdood(y, x, k);
     c = getch();
+
+    
     move(37, 152);
     if(cell.pixel[k][y][x].previous == '^'){
+        attron(COLOR_PAIR(1));
         for(int i = 0; i < 38; i++){
             for(int j = 0; j < 153; j++){
                 mvprintw(i, j, " ");
@@ -280,10 +898,13 @@ int key(int y, int x, char c, int k){
 		    }
     	}
         mvprintw(34, 10, "GOLd: %d", cell.gold);
+        attroff(COLOR_PAIR(1));
         key(75, 20, c, k);
     }
     mvprintw(34, 10, "GOLD: %d", cell.gold);
+    mvprintw(34, 40, "Health: %d", cell.health);
     move(37, 152);
+    attroff(COLOR_PAIR(4));
     key(y, x, c, k);
     return 1;
 }
@@ -487,6 +1108,7 @@ int jadval(int ax, int bx, int ay, int by, int k){
         }
         p = p1 + p2 + p3 + p4;
     } while (p != 3 && p != 4);
+    /*/
     int randomm = Random_number(0 , 10) / 10;
     if(randomm){
         int mx1 = Random_number(ax + 1, bx - 1);
@@ -519,6 +1141,7 @@ int jadval(int ax, int bx, int ay, int by, int k){
             }
         }
     }
+    /*/
     for(int i = ax + 1; i < bx; i++){
 		for(int j = ay + 1; j < by; j++){
 			int randomg = Random_number(0, 39) / 39;
@@ -592,11 +1215,11 @@ int jadval(int ax, int bx, int ay, int by, int k){
                     cell.pixel[k][j][i].flag = 15;
                 }
                 if(randomi == 2){
-                    cell.pixel[k][j][i].font = 'F';
+                    cell.pixel[k][j][i].font = 'm';
                     cell.pixel[k][j][i].flag = 16;
                 }
                 if(randomi == 3){
-                    cell.pixel[k][j][i].font = 'F';
+                    cell.pixel[k][j][i].font = 'p';
                     cell.pixel[k][j][i].flag = 17;
                 }
                 if(randomi == 4){
@@ -765,7 +1388,7 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
                 m2 = j;
                 n2 = i;
                 p2++;
-        }
+            }
         }
     }
     if (p1 + p2 == 2){
@@ -788,14 +1411,137 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
     }
 }
 
+int gold_room(int y, int x){
+    int m1, m2, n1, n2;
+
+    for(int j = y; j < 37; j++){
+        if(cell.pixel[3][j][x].previous == '-' || cell.pixel[3][j][x].previous == '+'){
+            m2 = j;
+            break;
+        }
+    }
+    for(int j = y; j > 0; j--){
+        if(cell.pixel[3][j][x].previous == '-' || cell.pixel[3][j][x].previous == '+'){
+            m1 = j;
+            break;
+        }
+    }
+    for(int i = x; i < 153; i++){
+        if(cell.pixel[3][y][i].previous == '|' || cell.pixel[3][y][i].previous == '+'){
+            n2 = i;
+            break;
+        }
+    }
+    for(int i = x; i > 0; i--){
+        if(cell.pixel[3][y][i].previous == '|' || cell.pixel[3][y][i].previous == '+'){
+            n1 = i;
+            break;
+        }
+    }
+    for(int j = m1 + 1; j < m2; j++){
+        for(int i = n1 + 1; i < n2; i++){
+            int randomg = Random_number(1, 2) / 2;
+            int randomt = Random_number(1, 2) / 2;
+            int randomB = Random_number(1, 3) / 3;
+            if(randomg){
+                if(randomB){
+                    cell.pixel[3][j][i].font = 'B';
+                    cell.pixel[3][j][i].previous = 'B';
+                    cell.pixel[3][j][i].flag = 12;
+                }
+                else{
+                    cell.pixel[3][j][i].font = '$';
+                    cell.pixel[3][j][i].previous = '$';
+                    cell.pixel[3][j][i].flag = 11;
+                }
+            }
+            else if(randomt){
+                cell.pixel[3][j][i].font = '^';
+                cell.pixel[3][j][i].previous = '^';
+                cell.pixel[3][j][i].flag = 7;
+            }
+            else{
+                cell.pixel[3][j][i].font = '.';
+                cell.pixel[3][j][i].previous = '.';
+                cell.pixel[3][j][i].flag = 0;
+            }
+        }
+    }
+    goldx1 = n1;
+    goldx2 = n2;
+    goldy1 = m1;
+    goldy2 = m2;
+}
+
+
+int telesm_room(int y, int x, int k){
+    int m1, m2, n1, n2;
+
+    for(int j = y; j < 37; j++){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+            m2 = j;
+            break;
+        }
+    }
+    for(int j = y; j > 0; j--){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+            m1 = j;
+            break;
+        }
+    }
+    for(int i = x; i < 153; i++){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+            n2 = i;
+            break;
+        }
+    }
+    for(int i = x; i > 0; i--){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+            n1 = i;
+            break;
+        }
+    }
+    for(int j = m1 + 1; j < m2; j++){
+        for(int i = n1 + 1; i < n2; i++){
+            int randomt = Random_number(1, 5) / 5;
+            if(!randomt){
+                cell.pixel[k][j][i].font = 'T';
+                cell.pixel[k][j][i].previous = 'T';
+                cell.pixel[k][j][i].flag = 12;
+                int randomk = Random_number(1, 3);
+                if(randomk == 1){
+                    cell.pixel[k][j][i].flag = 12;
+                }
+                if(randomk == 2){
+                    cell.pixel[k][j][i].flag = 13;
+                }
+                if(randomk == 3){
+                    cell.pixel[k][j][i].flag = 14;
+                }
+            }
+        }
+    }
+    telesmx1 = n1;
+    telesmx2 = n2;
+    telesmy1 = m1;
+    telesmy2 = m2;
+}
+
+
 int Main_game(int k){
-  /*  int i,j,l;
-    for (l=0; l<=k; ++l)
-      for (j=0; j<38; ++j)
-        for (i=0 ; i<153; ++i){
-           cell.pixel[l][j][i].font = ' ';
-           cell.pixel[l][j][i].flag = 0;
-        }*/
+    for (int j = 0; j < 38; ++j){
+        for(int i = 0; i < 153; ++i){
+            cell.pixel[k][j][i].font = ' ';
+            cell.pixel[k][j][i].check = 0;
+            cell.pixel[k][j][i].flag = 0;
+            cell.pixel[k][j][i].location = ' ';
+            cell.pixel[k][j][i].namayesh = 0;
+            cell.pixel[k][j][i].previous = ' ';
+        }
+    }   
+
+    
+    cell.floor = k;
     srand(time(0));
     int tedad = Random_number(11, 18);
     if(tedad == 11 || tedad == 13){
@@ -940,6 +1686,7 @@ int Main_game(int k){
         Rahroh_down(4, 13, 124, 148, 24, 124, 148, k);
         Rahroh_down(14, 24, 124, 148, 33, 124, 148, k);
     }
+    
     for(int j = 0; j < 38; j++){
         for(int i = 0; i < 153; i++){
             if(cell.pixel[k][j][i].font == '+' || cell.pixel[k][j][i].flag == 10){
@@ -957,13 +1704,15 @@ int Main_game(int k){
     }
     for(int j = 0; j < 38; j++){
         for (int i = 0; i < 153; i++){
+            if(cell.pixel[k][j][i].font == '+'){
+                cell.pixel[k][j][i].check = 0;
+            }
             cell.pixel[k][j][i].previous = cell.pixel[k][j][i].font;
             if(cell.pixel[k][j][i].font == '#'){
                 cell.pixel[k][j][i].flag = 4;
             }
         }
     }
-    update_screen(k);
     int p = 0, m, n;
     for(int j = 13; j < 27; j++){
         for(int i = 45; i < 120; i++){
@@ -978,16 +1727,106 @@ int Main_game(int k){
         if(p)
         break;
     }
+    if (k == 3){
+        do{
+            int randomx = Random_number(0, 152);
+            int randomy = Random_number(0, 37);
+            if(cell.pixel[3][randomy][randomx].font == '.'){
+                gold_room(randomy, randomx);
+                break;
+            }
+        }while(true);
+    }
+    if (k > 0){
+        int randomt = Random_number(1, 5) / 5;
+        if(!randomt){
+            telesm_room(m, n, k);
+        }
+    }
     mvprintw(m, n, "@");
     move(37, 152);
     noecho();
+    if(k < 3){
+        int m1 = m, n1 = n, m2 = m, n2 = n;
+        for(int j = m; j < 37; j++){
+            if(cell.pixel[k][j][n].previous == '-' || cell.pixel[k][j][n].previous == '+'){
+                m2 = j;
+                break;
+            }
+        }
+        for(int j = m; j > 0; j--){
+            if(cell.pixel[k][j][n].previous == '-' || cell.pixel[k][j][n].previous == '+'){
+                m1 = j;
+                break;
+            }
+        }
+        for(int i = n; i < 153; i++){
+            if(cell.pixel[k][m][i].previous == '|' || cell.pixel[k][m][i].previous == '+'){
+                n2 = i;
+                break;
+            }
+        }
+        for(int i = n; i > 0; i--){
+            if(cell.pixel[k][m][i].previous == '|' || cell.pixel[k][m][i].previous == '+'){
+                n1 = i;
+                break;
+            }
+        }
+        int randomx, randomy;
+        do
+        {
+            randomx = Random_number(0, 152);
+            randomy = Random_number(0, 37);
+            if (cell.pixel[k][randomy][randomx].font != '.'){
+                continue;
+            }
+            else{
+                if ((randomx < n2 && randomx > n1) && (randomy < m2 && randomy > m1)){
+                    continue;
+                }
+                else{
+                    break;
+                }
+            }
+        } while (true);
+        cell.pixel[k][randomy][randomx].font = '<';
+        cell.pixel[k][randomy][randomx].previous = '<';
+        cell.pixel[k][randomy][randomx].namayesh = 0;
+        cell.pixel[k][randomy][randomx].flag = 20;
+    }
+    
+    
+    
+    for(int j = 0; j < 38; j++){
+        for(int i = 0; i < 153; i++){
+            mvprintw(j, i, " ");
+        }
+    }
+    start_time = time(NULL);
+    end_time = time(NULL);
+    mahdood_room(m, n, k);
     char c = getch();
     key(m , n, c, k);
-
-    
+        
+    FILE *fptr;
+    pix temp;
+    int pp = 0;
+    int bb = 1;
+    fptr = (fopen("usersinfo.dat","rb+"));
+    fread(&temp, sizeof(pix), 1, fptr);
+    while(!feof(fptr) &&  bb){
+        if(!strcmp(temp.name, cell.name)){
+            bb = 0;;
+        } 
+        else{ 
+            fread(&temp, sizeof(pix), 1, fptr);
+            pp = pp + 1;
+            }
+    }
+    fseek(fptr,(pp * sizeof(pix)), SEEK_SET);
+    fwrite(&cell,sizeof(pix), 1,fptr);
+    fclose(fptr);     
 }
-
-
 
 int Check_password(){
     FILE *fptr;
@@ -1030,9 +1869,6 @@ int Check_password(){
                         mvprintw(32, 54, "Hello! %s!", cell.name);
                         mvprintw(33, 54, "Press enter to start the game!");
                         p = 0;
-                /*        getch();
-                           update_screen(0);
-                            getch();*/
                         break;
                     }
                     mvprintw(32, 54, "INCORECT PASSWORD!!! Please try again!");
@@ -1052,7 +1888,6 @@ int Check_password(){
     
     getch();
     return p;
-
 }
 
 
@@ -1079,18 +1914,18 @@ int New_user(){
         fptr = (fopen("usersinfo.dat","rb+"));
         mvprintw(11, 50, "                                                                  ");
         attron(COLOR_PAIR(3));
-        mvscanw(11,50, "%s", temp.name);
-        fread(&cell, sizeof(cell), 1, fptr);
+        mvscanw(11,50, "%s", cell.name);
+        fread(&temp, sizeof(temp), 1, fptr);
         while(!feof(fptr) && p){
             if(!strcmp(temp.name, cell.name)){
                 attron(COLOR_PAIR(2));
                 mvprintw(32, 54, "WARNING!!! The username you enterd is already taken!");
                 attroff(COLOR_PAIR(2));
                 p=0;
-              //  break;
+              
             } 
             else{ 
-               fread(&cell, sizeof(cell), 1, fptr);
+               fread(&temp, sizeof(temp), 1, fptr);
             }
         }
     }while(!p);
@@ -1098,7 +1933,7 @@ int New_user(){
     
     mvprintw(32, 54, "                                                                  ");
     attron(COLOR_PAIR(4));
-    mvprintw(32, 54, "Hello %s!!!", temp.name);
+    mvprintw(32, 54, "Hello %s!!!", cell.name);
     attroff(COLOR_PAIR(4));
     attron(COLOR_PAIR(3));
     mvprintw(33, 54, "Press R to return to the previous page");
@@ -1109,9 +1944,9 @@ int New_user(){
         mvprintw(13, 50, "please enter your password:");
         attroff(COLOR_PAIR(1));
         attron(COLOR_PAIR(3));
-        mvscanw(14, 50, "%s", temp.password);
+        mvscanw(14, 50, "%s", cell.password);
         attroff(COLOR_PAIR(3));
-        if(strlen(temp.password) < 8){
+        if(strlen(cell.password) < 8){
             mvprintw(32, 54, "                                                                  ");
             mvprintw(33, 54, "                                                                  ");
             attron(COLOR_PAIR(2));
@@ -1125,14 +1960,14 @@ int New_user(){
     }while(p);
     do{
         int b = 0, k = 0, a = 0;
-        for(int i = 0; i < strlen(temp.password); i++){
-            if(temp.password[i] >= 'A' && temp.password[i] <= 'Z'){
+        for(int i = 0; i < strlen(cell.password); i++){
+            if(cell.password[i] >= 'A' && cell.password[i] <= 'Z'){
                 b++;
             }
-            if(temp.password[i] >= 'a' && temp.password[i] <= 'z'){
+            if(cell.password[i] >= 'a' && cell.password[i] <= 'z'){
                 k++;
             }
-            if(temp.password[i] >= '0' && temp.password[i] <= '9'){
+            if(cell.password[i] >= '0' && cell.password[i] <= '9'){
                 a++;
             }
         }
@@ -1164,7 +1999,7 @@ int New_user(){
             attroff(COLOR_PAIR(2));
         }
         attron(COLOR_PAIR(3));
-        mvscanw(14, 50, "%s", temp.password);
+        mvscanw(14, 50, "%s", cell.password);
         attroff(COLOR_PAIR(3));
         mvprintw(30, 50, "                                                                                     ");
         mvprintw(31, 50, "                                                                                     ");
@@ -1176,24 +2011,24 @@ int New_user(){
     do{
         int a = 0, d = 0, m;
         attron(COLOR_PAIR(3));
-        mvscanw(17, 50, "%s", temp.email);
+        mvscanw(17, 50, "%s", cell.email);
         attroff(COLOR_PAIR(3));
         mvprintw(17, 50, "                                                                                     ");
         mvprintw(30, 50, "                                                                                     ");
         mvprintw(31, 50, "                                                                                     ");
         mvprintw(32, 50, "                                                                                     ");
-        if(temp.email[strlen(temp.email) - 4] != '.'){
+        if(cell.email[strlen(cell.email) - 4] != '.'){
             attron(COLOR_PAIR(2));
             mvprintw(32, 50, "WARNING!!! Invalid email!");
             attroff(COLOR_PAIR(2));
             continue;
         }
-        for(int i = 0; i < strlen(temp.email); i++){
-            if(temp.email[i] == '@'){
+        for(int i = 0; i < strlen(cell.email); i++){
+            if(cell.email[i] == '@'){
                 a++;
                 m = i;
             }
-            if(temp.email[i] == '.'){
+            if(cell.email[i] == '.'){
                 d++;
             }
         }
@@ -1204,7 +2039,7 @@ int New_user(){
             continue;
         }
         
-        if(m < 3 || temp.email[m + 1] == '.'){
+        if(m < 3 || cell.email[m + 1] == '.'){
             attron(COLOR_PAIR(2));
             mvprintw(32, 50, "WARNING!!! Invalid email!");
             attroff(COLOR_PAIR(2));
@@ -1219,15 +2054,248 @@ int New_user(){
         }
     }while(true);
     fptr = (fopen("usersinfo.dat","ab+"));
-    fwrite(&temp, sizeof(cell), 1, fptr);
+    fwrite(&cell, sizeof(cell), 1, fptr);
     fclose(fptr);
     getch();
     return 1;
 }
 
 //-----------------------------------------------------------------------------------------------------
+int Settings(){
+    clear();
+    attron(COLOR_PAIR(2));
+    mvprintw(5, 54, "R O G U E    G A M E");
+    attroff(COLOR_PAIR(2));
+    attron(COLOR_PAIR(4));
+    mvprintw(6, 58, "SETTINGS MENUE!!!");
+    attroff(COLOR_PAIR(4));
+    attron(COLOR_PAIR(1));
+    mvprintw(11, 60, "Choose defficulty:\n");
+    mvprintw(13, 65, "Easy\n");
+    mvprintw(15, 65, "Normal\n");
+    mvprintw(17, 65, "Hard\n");
+    mvprintw(19, 60, "Choose color of hero:");
+    mvprintw(21, 65, "Blue\n");
+    mvprintw(23, 65, "Gold\n");
+    mvprintw(25, 65, "White\n");
+    mvprintw(27, 65, "Cyan\n");
+    attroff(COLOR_PAIR(1));
+    attron(COLOR_PAIR(3));
+    mvprintw(32, 54, "Use the up and down keys to move.");
+    attroff(COLOR_PAIR(3));
+    attron(COLOR_PAIR(4));
+    mvprintw(13, 61, "**");
+    noecho();
+    char c = getch();
+    int number = 0;
+    do{
+        while(c != '5'){
+            if(c == 65){
+                mvprintw(13 + 2 * number, 61, "  ");
+                number = ((number + 7) %8);
+                if(13 + 2 * number == 19){
+                    number--;
+                }
+                mvprintw(13 + 2 * number, 61, "**");
+            }
+            else if(c == 66){
+                mvprintw(13 + 2 * number, 61, "  ");
+                number = (number + 1) % 8;
+                if(13 + 2 * number == 19){
+                    number++;
+                }
+                mvprintw(13 + 2 * number, 61, "**");
+            }
+            c = getch();
+        }
+        number++;
+        if(number == 1){
+            cell.health = 100;
+        }
+        if(number == 2){
+            cell.health = 75;
+        }
+        if(number == 3){
+            cell.health = 50;
+        }
+        if(number == 5){
+            herocolor = 7;
+        }
+        if(number == 6){
+            herocolor = 5;
+        }
+        if(number == 7){
+            herocolor = 3;
+        }
+        if(number == 8){
+            herocolor = 4;
+        }
+        c = getch();
+    }while(c != 'R');
+    mvprintw(33, 60, "Difficulty changed");
+    mvprintw(33, 90, "%d", number);
+    getch();
+    attroff(COLOR_PAIR(4));
+    Login();
+}
+//-------------------------------------------------scoreboard----------------------------------------------
 
+int Scoreboard(){
+    int i,j;
+    pix temp;
+    score userscore[100];
+    score tempscore;
+    FILE *fptr;
+
+    int count = 0;
+    fptr = (fopen("usersinfo.dat","rb"));
+    
+    fread(&temp, sizeof(temp), 1, fptr);
+    while(!feof(fptr)){        
+        userscore[count].exp = temp.exp;
+        userscore[count].gold = temp.gold;
+        userscore[count].score = temp.score;
+        strcpy(userscore[count].name , temp.name);
+        count++;       
+               
+        fread(&temp, sizeof(temp), 1, fptr);    
+    }
+    for (i = 99; i > 0 ; --i){
+        for (j = 0; j < i; ++j){
+            if (userscore[j].score < userscore[j+1].score){ 
+                tempscore = userscore[j];
+                userscore[j] = userscore[j+1];
+                userscore[j+1] = tempscore;
+            }
+        }    
+    }
+    fclose(fptr);
+    char s;
+    int p = 0;
+    int number = 0;
+    do{
+        clear();
+        attron(COLOR_PAIR(2));
+        mvprintw(5, 54, "R O G U E    G A M E");
+        attroff(COLOR_PAIR(2));
+        attron(COLOR_PAIR(4));
+        mvprintw(6, 58, "SCOREBOARD!!!");
+        attroff(COLOR_PAIR(4));
+        attron(A_BOLD);
+        mvprintw(8, 15, "Username:");
+        mvprintw(8, 50, "Gold:");
+        mvprintw(8, 85, "Experience:");
+        mvprintw(8, 120, "Score:");
+        attroff(A_BOLD);
+
+        attron(COLOR_PAIR(3));
+        if (s == 65){
+            number--;
+        }
+        if(s == 66){
+            number++;
+        }
+        if(number >= 0){
+            for(int i = 0; i < 10; i++){
+                if(i + 10 * number < count){
+                    if (i + 10 * number == 0){
+                        attron(A_BOLD);
+                        attron(COLOR_PAIR(5));
+                        mvprintw(10, 5, "GOAT ->");
+                        mvprintw((10 + i * 2), 13, "%d.", number * 10 + i + 1);
+                        mvprintw(10 + i * 2, 17, "%s                               ", userscore[i + 10 * number].name);
+                            if(!strcmp(userscore[i + 10 * number].name, cell.name)){
+                            for(int j = 0; j < 152; j++){
+                                mvprintw((9 + i * 2), j, "-");
+                                mvprintw((11 + i * 2), j, "-");
+                            }
+                        }
+                        attroff(COLOR_PAIR(5));
+                        attron(COLOR_PAIR(3));
+                        attroff(A_BOLD);
+                    }
+                    else if (i + 10 * number == 1){
+                        attron(A_BOLD);
+                        attron(COLOR_PAIR(7));
+                        mvprintw(12, 5, "KING ->");
+                        mvprintw((10 + i * 2), 13, "%d.", number * 10 + i + 1);
+                        mvprintw(10 + i * 2, 17, "%s                               ", userscore[i + 10 * number].name);
+                        if(!strcmp(userscore[i + 10 * number].name, cell.name)){
+                            for(int j = 0; j < 152; j++){
+                                mvprintw((9 + i * 2), j, "-");
+                                mvprintw((11 + i * 2), j, "-");
+                            }
+                        }
+                        attroff(COLOR_PAIR(7));
+                        attron(COLOR_PAIR(3));
+                        attroff(A_BOLD);
+                    }
+                    else if (i + 10 * number == 2){
+                        attron(A_BOLD);
+                        attron(COLOR_PAIR(8));
+                        mvprintw(14, 5, "BOSS ->");
+                        mvprintw((10 + i * 2), 13, "%d.", number * 10 + i + 1);
+                        mvprintw(10 + i * 2, 17, "%s                               ", userscore[i + 10 * number].name);
+                        if(!strcmp(userscore[i + 10 * number].name, cell.name)){
+                            for(int j = 0; j < 152; j++){
+                                mvprintw((9 + i * 2), j, "-");
+                                mvprintw((11 + i * 2), j, "-");
+                            }
+                        }
+                        attroff(COLOR_PAIR(8));
+                        attron(COLOR_PAIR(3));
+                        attroff(A_BOLD);
+                    }
+                    else{
+                        mvprintw((10 + i * 2), 13, "%d.", number * 10 + i + 1);
+                        mvprintw(10 + i * 2, 17, "%s                               ", userscore[i + 10 * number].name);
+                        if(!strcmp(userscore[i + 10 * number].name, cell.name)){
+                            for(int j = 0; j < 152; j++){
+                                mvprintw((9 + i * 2), j, "-");
+                                mvprintw((11 + i * 2), j, "-");
+                            }
+                        }
+                    }
+                }
+                else{
+                    mvprintw(10 + i * 2, 13, "                                      ");
+                }
+            }
+            for(int i = 0; i < 10; i++){
+                if(i + 10 * number < count){
+                    mvprintw(10 + i * 2, 52, "%d                 ", userscore[i + 10 * number].gold);
+                }
+                else
+                    mvprintw(10 + i * 2, 52, "                     ");
+            }
+            for(int i = 0; i < 10; i++){
+                if(i + 10 * number < count){
+                    mvprintw(10 + i * 2, 87, "%d                   ", userscore[i + 10 * number].exp);
+                }
+                else
+                    mvprintw(10 + i * 2, 87, "                     ");
+            }
+            for(int i = 0; i < 10; i++){
+                if(i + 10 * number < count){
+                    mvprintw(10 + i * 2, 122, "%d                   ", userscore[i + 10 * number].score);
+                }
+                else
+                    mvprintw(10 + i * 2, 122, "                     ");
+            }
+        }
+        if(number >= count / 10){
+            mvprintw(33, 50, "End of the list!");
+        }
+        s = getch();
+    }while(s != 'R');
+    attroff(COLOR_PAIR(3));
+    attroff(COLOR_PAIR(4));
+    getch();
+}
+
+//----------------------------------------------------------------------------------------------------------
 int Login(){
+   
     clear();
     attron(COLOR_PAIR(2));
     mvprintw(5, 54, "R O G U E    G A M E");
@@ -1239,7 +2307,7 @@ int Login(){
     mvprintw(11, 60, "New game\n");
     mvprintw(13, 60, "Last game\n");
     mvprintw(15, 60, "Scoreboard\n");
-    mvprintw(17, 60, "Options\n");
+    mvprintw(17, 60, "Settings\n");
     mvprintw(19, 60, "Return to the pervious page");
     mvprintw(21, 60, "Exit\n");
     attroff(COLOR_PAIR(1));
@@ -1264,143 +2332,68 @@ int Login(){
         }
         c = getch();
     }
+
     number++;
     attroff(COLOR_PAIR(4));
 
 
-
-
     if(number == 1){
-        //if(Check_password() == 1){
-          //  Main_game(0);
-        //}
-    Main_game(0);
-    
-    pix temp;
-    int p = 0;
-    int b = 1;
-    FILE *fptr;
-    fptr = (fopen("usersinfo.dat","rb+"));
-    fread(&temp, sizeof(cell), 1, fptr);
-    while(!feof(fptr) && b){
-        if(!strcmp(temp.name, cell.name)){
-            b = 0;
-        } 
-        else{ 
-            fread(&temp, sizeof(cell), 1, fptr);
-            ++p;
-        }
-    }
-    //--p;
-    fseek(fptr,(p * sizeof(cell)), SEEK_SET);
-    fwrite(&cell,sizeof(cell), 1,fptr);
-
-    fclose(fptr); 
+        cell.exp++;
+        Main_game(0);
     
     }
-
-
-
-
-
-
-
 
     else if(number == 2){
+        cell.exp++;
 
-        //Check_password();
-        
-        //if(Check_password() == 1){
- /*
-            mvprintw(11, 50, "                                                                  ");
-            attron(COLOR_PAIR(3));
-            //mvscanw(11,50, "%s", tempi.name);
-   */       char tempchar[40];
-            strcpy(tempchar,cell.name);
-            int b = 1;
-            int p = 0;
-            FILE *fptr;
-            fptr = (fopen("usersinfo.dat","rb"));
-            fread(&cell, sizeof(cell), 1, fptr);
-            while(!feof(fptr) && b){
-                if (!strcmp(cell.name,tempchar)){
-          //          mvprintw(10,100,"%s",cell.name);
-                    b = 0;
-                 //   break;
-                }               
-                else{     
-        //            mvprintw(25,100,"%s",cell.name);
-                    ++p;
-                    fread(&cell, sizeof(cell), 1, fptr);
+        int m, n;
+        for (int j = 0; j < 37; j++){
+            for (int i = 0; i < 153; i++){
+                if (cell.pixel[cell.floor][j][i].font == '@'){
+                    m = j;
+                    n = i;
                 }
             }
-          //  --p;
-            fseek(fptr,(p * sizeof(cell)), SEEK_SET);
-            fread(&cell,sizeof(cell),1,fptr);
-        //    update_screen(0);
-            
-               for (int j=0; j < 38; ++j)
-                   for(int i=0; i<153; ++i)
-                        mvprintw(j , i ,"%c",cell.pixel[0][j][i].font);
-      
-       // }
-   /**/
-     //       for(int j = 0; j < 38; j++){
-       //         for(int i = 0; i < 153; i++){
-                    //cell.pixel[0][j][i].font = 'a';
-                    //mvprintw(j, i, "%c", cell.pixel[0][j][i].font);
-              //  }
-      //      }
-            //mvprintw(10, 10, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+        }
+
+        clear();
+
+        mvprintw(m, n, "@");
+        move(37, 152);
+        noecho();
         
-        getch();
-    //}
-        /*/
-         int k = 0;
-           int m, n;
-            for(int j = 0; j < 38; j++){
-                for(int i = 0; i < 153; i++){
-                    if(cell.pixel[k][j][i].font == '@'){
-                        m = j;
-                        n = i;
-                        break;
-                    }
+        start_time = time(NULL);
+        end_time = time(NULL);
+
+        mahdood_room(m, n, cell.floor);
+        char c = getch();
+        key(m , n, c, cell.floor);
+
+        FILE *fptr;
+        pix temp;
+        int pp = 0;
+        int bb = 1;
+        fptr = (fopen("usersinfo.dat","rb+"));
+        fread(&temp, sizeof(pix), 1, fptr);
+        while(!feof(fptr) &&  bb){
+            if(!strcmp(temp.name, cell.name)){
+                bb = 0;;
+            } 
+            else{ 
+                fread(&temp, sizeof(pix), 1, fptr);
+                pp = pp + 1;
                 }
-            }
-            update_screen(k);
-            mvprintw(m,n,"@");
-            char c = getch();
-       key(m, n, c, k);
-    //----------------------------------------- Writing... ----------------------------------------
-/*
-    FILE *fptr;
-    pix temp;
-    int p = 0;
-
-    fptr = (fopen("usersinfo.dat","rb+"));
-    fread(&temp, sizeof(cell), 1, fptr);
-    while(!feof(fptr)){
-        if(!strcmp(temp.name, cell.name)){
-            break;
-        } 
-        else{ 
-            fread(&temp, sizeof(cell), 1, fptr);
-            ++p;
         }
-    }
-    fseek(fptr,(p * sizeof(cell)), SEEK_SET);
-    fwrite(&cell,sizeof(cell), 1,fptr);
-    fclose(fptr); 
-        }
+        fseek(fptr,(pp * sizeof(pix)), SEEK_SET);
+        fwrite(&cell,sizeof(pix), 1,fptr);
+        fclose(fptr);        
     }
 
-*/
-    }
     else if(number == 3){
-
+        Scoreboard();
     }
     else if(number == 4){
-
+        Settings();
     }
     else if(number == 5){
         return 5;
@@ -1410,7 +2403,7 @@ int Login(){
     }
     clear();
 }
-
+//----------------------------------------------------------------------------------------
 int main(){
     int k = 0;
     FILE *fptr;
@@ -1418,29 +2411,35 @@ int main(){
     if (fptr == NULL){
         fptr = (fopen("usersinfo.dat","wb"));
     }
-    for(int j = 0; j < 38; j++){
-        for(int i = 0; i < 153; i++){
-            cell.pixel[k][j][i].flag = 0;
-            cell.pixel[k][j][i].font = ' ';
-            
-        }
-    }
-    int i,j,l;
-    for (l=0; l<=4; ++l)
-      for (j=0; j<38; ++j)
-        for (i=0 ; i<153; ++i){
+
+    for (int l = 0; l <= 4; ++l)
+      for (int j = 0; j < 38; ++j)
+        for (int i = 0 ; i < 153; ++i){
            cell.pixel[l][j][i].font = ' ';
            cell.pixel[l][j][i].flag = 0;
-        }
+           cell.pixel[l][j][i].namayesh = 0;
+    }
+    cell.thealthy = 0, cell.tspeed = 0, cell.tdamage = 0;
+    cell.tir = 0, cell.gorz = 0, cell.khanjar = 0, cell.asa = 0, cell.shamshir = 0, cell.mainfood = 0;
+    cell.foodmajic = 0, cell.foodperfect = 0; 
+    cell.health = 100, cell.gold = 0, cell.score = 0, cell.exp = 0;
+    cell.gorosneh = 0;
     initscr();
     while(true){
         clear();
         start_color();
         init_color(COLOR_BLACK, 100, 100, 100);
+        init_color(COLOR_GOLD, 1000, 843, 0);
+        init_color(COLOR_SILVER, 900, 900, 900);
+        init_color(COLOR_BORONZE, 804, 498, 796);
         init_pair(1, COLOR_YELLOW, COLOR_BLACK);
         init_pair(2, COLOR_RED, COLOR_BLACK);
         init_pair(3, COLOR_WHITE, COLOR_BLACK);
         init_pair(4, COLOR_CYAN, COLOR_BLACK);
+        init_pair(5, COLOR_GOLD, COLOR_BLACK);
+        init_pair(6, COLOR_SILVER, COLOR_BLACK);
+        init_pair(7, COLOR_BLUE, COLOR_BLACK);
+        init_pair(8, COLOR_BORONZE, COLOR_BLACK);
         bkgd(COLOR_PAIR(1));
         attron(A_BOLD);
         attron(COLOR_PAIR(2));
@@ -1466,12 +2465,12 @@ int main(){
         while(c != 10){
             if(c == 65){
                 mvprintw(17 + 2 * number, 56, "  ");
-                number = ((number + 2) % 3);
+                number = ((number + 3) % 4);
                 mvprintw(17 + 2 * number, 56, "**");
             }
             else if(c == 66){
                 mvprintw(17 + 2 * number, 56, "  ");
-                number = (number + 1) % 3;
+                number = (number + 1) % 4;
                 mvprintw(17 + 2 * number, 56, "**");
             }
             c = getch();
@@ -1481,13 +2480,14 @@ int main(){
         if(number == 1){
             if (New_user() == 1){
                 Login();
+   
             }
         }
         else if(number == 2){
             int p = Check_password();
-            //update_screen(0);
-            //getch();
+
             int a = Login();
+
             if(a == 6){
                 refresh();
                 endwin();
@@ -1499,7 +2499,10 @@ int main(){
             }
         }
         else if(number == 3){
+            testkey = 1;
             Main_game(0);
+            testkey = 0;
+ 
         }
         else if(number == 4){
             refresh();
