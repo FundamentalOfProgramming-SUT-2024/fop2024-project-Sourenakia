@@ -778,6 +778,7 @@ int key(int y, int x, char c, int k){
     }
     mvprintw(34, 10, "GOLD: %d", cell.gold);
     mvprintw(34, 40, "Health: %d", cell.health);
+    mvprintw(1, 100, "floo %d", k);
     move(37, 152);
     key(y, x, c, k);
     return 1;
@@ -1285,7 +1286,69 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
     }
 }
 
+int gold_room(int y, int x){
+    int m1, m2, n1, n2;
+    mvprintw(1, 70, "%d %d %d %d ", m1, m2, n1, n2);
+
+    for(int j = y; j < 37; j++){
+        if(cell.pixel[3][j][x].previous == '-' || cell.pixel[3][j][x].previous == '+'){
+            m2 = j;
+            break;
+        }
+    }
+    for(int j = y; j > 0; j--){
+        if(cell.pixel[3][j][x].previous == '-' || cell.pixel[3][j][x].previous == '+'){
+            m1 = j;
+            break;
+        }
+    }
+    for(int i = x; i < 153; i++){
+        if(cell.pixel[3][y][i].previous == '|' || cell.pixel[3][y][i].previous == '+'){
+            n2 = i;
+            break;
+        }
+    }
+    for(int i = x; i > 0; i--){
+        if(cell.pixel[3][y][i].previous == '|' || cell.pixel[3][y][i].previous == '+'){
+            n1 = i;
+            break;
+        }
+    }
+    for(int j = m1 + 1; j < m2; j++){
+        for(int i = n1 + 1; i < n2; i++){
+            int randomg = Random_number(1, 2) / 2;
+            int randomt = Random_number(1, 2) / 2;
+            int randomB = Random_number(1, 3) / 3;
+            if(randomg){
+                if(randomB){
+                    cell.pixel[3][j][i].font = 'B';
+                    cell.pixel[3][j][i].previous = 'B';
+                    cell.pixel[3][j][i].flag = 12;
+                }
+                else{
+                    cell.pixel[3][j][i].font = '$';
+                    cell.pixel[3][j][i].previous = '$';
+                    cell.pixel[3][j][i].flag = 11;
+                }
+            }
+            else if(randomt){
+                cell.pixel[3][j][i].font = '^';
+                cell.pixel[3][j][i].previous = '^';
+                cell.pixel[3][j][i].flag = 7;
+            }
+            else{
+                cell.pixel[3][j][i].font = '.';
+                cell.pixel[3][j][i].previous = '.';
+                cell.pixel[3][j][i].flag = 0;
+            }
+        }
+    }
+    
+}
+
+
 int Main_game(int k){
+    k = 3;
     for (int j = 0; j < 38; ++j){
         for(int i = 0; i < 153; ++i){
             cell.pixel[k][j][i].font = ' ';
@@ -1443,6 +1506,7 @@ int Main_game(int k){
         Rahroh_down(4, 13, 124, 148, 24, 124, 148, k);
         Rahroh_down(14, 24, 124, 148, 33, 124, 148, k);
     }
+    
     for(int j = 0; j < 38; j++){
         for(int i = 0; i < 153; i++){
             if(cell.pixel[k][j][i].font == '+' || cell.pixel[k][j][i].flag == 10){
@@ -1469,7 +1533,6 @@ int Main_game(int k){
             }
         }
     }
-    
     int p = 0, m, n;
     for(int j = 13; j < 27; j++){
         for(int i = 45; i < 120; i++){
@@ -1484,10 +1547,20 @@ int Main_game(int k){
         if(p)
         break;
     }
+    if (k == 3){
+        do{
+            int randomx = Random_number(0, 152);
+            int randomy = Random_number(0, 37);
+            if(cell.pixel[3][randomy][randomx].font == '.'){
+                gold_room(randomy, randomx);
+                break;
+            }
+        }while(true);
+    }
     mvprintw(m, n, "@");
     move(37, 152);
     noecho();
-    if(k < 4){
+    if(k < 3){
         int m1 = m, n1 = n, m2 = m, n2 = n;
         for(int j = m; j < 37; j++){
             if(cell.pixel[k][j][n].previous == '-' || cell.pixel[k][j][n].previous == '+'){
@@ -1535,11 +1608,15 @@ int Main_game(int k){
         cell.pixel[k][randomy][randomx].namayesh = 0;
         cell.pixel[k][randomy][randomx].flag = 20;
     }
+    
+    
+    
     for(int j = 0; j < 38; j++){
         for(int i = 0; i < 153; i++){
             mvprintw(j, i, " ");
         }
     }
+    
     mahdood_room(m, n, k);
     char c = getch();
     key(m , n, c, k);
