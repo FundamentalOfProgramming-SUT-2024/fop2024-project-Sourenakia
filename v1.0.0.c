@@ -44,6 +44,7 @@ int M = 0;
 int testkey = 0;
 int herocolor = 1;
 int goldx1 = 0, goldx2 = 0, goldy1 = 0, goldy2 = 0; 
+int telesmx1, telesmx2, telesmy1, telesmy2;
 
 int Login();
  
@@ -95,6 +96,20 @@ void update_screen(int k){
             }
         }
         attroff(COLOR_PAIR(5));
+        attron(COLOR_PAIR(1));
+    }
+    if (k > 0){
+        attron(COLOR_PAIR(8));
+        for(int j = telesmy1; j <= telesmy2; j++){
+            for(int i = telesmx1; i <= telesmx2; i++){
+                if(cell.pixel[k][j][i].font != '^')
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                else{
+                    mvprintw(j, i, ".");
+                }
+            }
+        }
+        attroff(COLOR_PAIR(8));
         attron(COLOR_PAIR(1));
     }
 }
@@ -186,6 +201,20 @@ int mahdood_room(int y, int x, int k){
             attron(COLOR_PAIR(1));
         }
     }
+    if (k > 0){
+        attron(COLOR_PAIR(8));
+        for(int j = telesmy1; j <= telesmy2; j++){
+            for(int i = telesmx1; i <= telesmx2; i++){
+                if(cell.pixel[k][j][i].font != '^')
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                else{
+                    mvprintw(j, i, ".");
+                }
+            }
+        }
+        attroff(COLOR_PAIR(8));
+        attron(COLOR_PAIR(1));
+    }
     move(37, 152);
 }
 
@@ -234,6 +263,9 @@ int key(int y, int x, char c, int k){
     move(37, 152);
     if (k == 3 && (x >= goldx1 && x <= goldx2) && (y >= goldy1 && y < goldy2)){
         attron(COLOR_PAIR(5));
+    }
+    if (k > 0 && (x >= telesmx1 && x <= telesmx2) && (y >= telesmy1 && y < telesmy2)){
+        attron(COLOR_PAIR(8));
     }
     else{
         attron(COLOR_PAIR(1));
@@ -831,7 +863,6 @@ int key(int y, int x, char c, int k){
     }
     mvprintw(34, 10, "GOLD: %d", cell.gold);
     mvprintw(34, 40, "Health: %d", cell.health);
-    mvprintw(1, 100, "floo %d", k);
     move(37, 152);
     attroff(COLOR_PAIR(4));
     key(y, x, c, k);
@@ -1342,7 +1373,6 @@ int Rahroh_down(int a, int b, int c, int d, int e, int f, int g, int k){
 
 int gold_room(int y, int x){
     int m1, m2, n1, n2;
-    mvprintw(1, 70, "%d %d %d %d ", m1, m2, n1, n2);
 
     for(int j = y; j < 37; j++){
         if(cell.pixel[3][j][x].previous == '-' || cell.pixel[3][j][x].previous == '+'){
@@ -1404,8 +1434,61 @@ int gold_room(int y, int x){
 }
 
 
+int telesm_room(int y, int x, int k){
+    int m1, m2, n1, n2;
+
+    for(int j = y; j < 37; j++){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+            m2 = j;
+            break;
+        }
+    }
+    for(int j = y; j > 0; j--){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+            m1 = j;
+            break;
+        }
+    }
+    for(int i = x; i < 153; i++){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+            n2 = i;
+            break;
+        }
+    }
+    for(int i = x; i > 0; i--){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+            n1 = i;
+            break;
+        }
+    }
+    for(int j = m1 + 1; j < m2; j++){
+        for(int i = n1 + 1; i < n2; i++){
+            int randomt = Random_number(1, 5) / 5;
+            if(!randomt){
+                cell.pixel[k][j][i].font = 'T';
+                cell.pixel[k][j][i].previous = 'T';
+                cell.pixel[k][j][i].flag = 12;
+                int randomk = Random_number(1, 3);
+                if(randomk == 1){
+                    cell.pixel[k][j][i].flag = 12;
+                }
+                if(randomk == 2){
+                    cell.pixel[k][j][i].flag = 13;
+                }
+                if(randomk == 3){
+                    cell.pixel[k][j][i].flag = 14;
+                }
+            }
+        }
+    }
+    telesmx1 = n1;
+    telesmx2 = n2;
+    telesmy1 = m1;
+    telesmy2 = m2;
+}
+
+
 int Main_game(int k){
-    k = 3;
     for (int j = 0; j < 38; ++j){
         for(int i = 0; i < 153; ++i){
             cell.pixel[k][j][i].font = ' ';
@@ -1613,6 +1696,12 @@ int Main_game(int k){
                 break;
             }
         }while(true);
+    }
+    if (k > 0){
+        int randomt = Random_number(1, 5) / 5;
+        if(!randomt){
+            telesm_room(m, n, k);
+        }
     }
     mvprintw(m, n, "@");
     move(37, 152);
