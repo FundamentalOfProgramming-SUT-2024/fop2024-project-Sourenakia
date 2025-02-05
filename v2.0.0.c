@@ -35,7 +35,7 @@ typedef struct{
     int gold, exp, score;
 }score;
 
-
+int health = 100;
 
 int Main_game(int k);
 
@@ -259,6 +259,13 @@ int Rahroh_mahdood(int y, int x, int k){
 //-------------------------------------------KEY----------------------------------------
 
 int key(int y, int x, char c, int k){
+    if (cell.health <= 0){
+        return 1;
+    }
+    cell.health += ((cell.gorosneh - 50) * -1) / 5;
+    if(cell.health > health){
+        cell.health = health;
+    }
     end_time = time(NULL);
     if (end_time - start_time > 2){
         cell.gorosneh++;
@@ -637,13 +644,13 @@ int key(int y, int x, char c, int k){
                     if(number == 0 && cell.mainfood > 0){
                         te++;
                         cell.mainfood--;
-                        cell.health++;
+                        //cell.health++;
                         mvprintw(10, 94, "%d", cell.mainfood);
 
                     }
                     if(number == 1 && cell.foodmajic > 0){
                         te++;
-                        cell.foodmajic--;
+                        //cell.foodmajic--;
                         mvprintw(12, 94, "%d", cell.foodmajic);
                         cell.health++;
                     }
@@ -798,7 +805,7 @@ int key(int y, int x, char c, int k){
             //f = getch();
         }
     }
-    if(cell.pixel[k][y][x].previous == 'F'){
+    if(cell.pixel[k][y][x].previous == 'f'){
         f = getch();
         move(37, 152);
         if(f == '5'){
@@ -901,6 +908,7 @@ int key(int y, int x, char c, int k){
         attroff(COLOR_PAIR(1));
         key(75, 20, c, k);
     }
+    mvprintw(34, 10, "                                                   ");
     mvprintw(34, 10, "GOLD: %d", cell.gold);
     mvprintw(34, 40, "Health: %d", cell.health);
     move(37, 152);
@@ -1211,7 +1219,7 @@ int jadval(int ax, int bx, int ay, int by, int k){
             if(randomf){
                 int randomi = Random_number(1, 4);
                 if(randomi == 1){
-                    cell.pixel[k][j][i].font = 'F';
+                    cell.pixel[k][j][i].font = 'f';
                     cell.pixel[k][j][i].flag = 15;
                 }
                 if(randomi == 2){
@@ -1223,8 +1231,36 @@ int jadval(int ax, int bx, int ay, int by, int k){
                     cell.pixel[k][j][i].flag = 17;
                 }
                 if(randomi == 4){
-                    cell.pixel[k][j][i].font = 'F';
+                    cell.pixel[k][j][i].font = 'f';
                     cell.pixel[k][j][i].flag = 18;
+                }
+            }
+        }
+    }
+    for (int i = ax + 1; i < bx; i++){
+        for (int j = ay + 1; j < by; j++){
+            int random = Random_number(1, 40) / 40;
+            if (random){
+                int randomi = Random_number(1, 5);
+                if (randomi == 1){
+                    cell.pixel[k][j][i].font = 'F';
+                    cell.pixel[k][j][i].flag = 30;
+                }
+                if (randomi == 2){
+                    cell.pixel[k][j][i].font = 'D';
+                    cell.pixel[k][j][i].flag = 31;
+                }
+                if (randomi == 3){
+                    cell.pixel[k][j][i].font = 'G';
+                    cell.pixel[k][j][i].flag = 32;
+                }
+                if (randomi == 4){
+                    cell.pixel[k][j][i].font = 'S';
+                    cell.pixel[k][j][i].flag = 33;
+                }
+                if (randomi == 5){
+                    cell.pixel[k][j][i].font = 'U';
+                    cell.pixel[k][j][i].flag = 34;
                 }
             }
         }
@@ -2130,6 +2166,7 @@ int Settings(){
         if(number == 8){
             herocolor = 4;
         }
+        health = cell.health;
         c = getch();
     }while(c != 'R');
     mvprintw(33, 60, "Difficulty changed");
