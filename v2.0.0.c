@@ -17,6 +17,7 @@ typedef struct{
     int healthy;
     int enemyhealth;
     int number;
+    int tedad;
 }mainpixel;
 
 
@@ -50,6 +51,7 @@ int telesmx1, telesmx2, telesmy1, telesmy2;
 time_t start_time;
 time_t end_time;
 int zarbeh = 5;
+int weapon = 1;
 
 int Login();
  
@@ -571,6 +573,144 @@ int DFSUG(char c, int damage, int m1, int m2, int n1, int n2 ,int x, int y, int 
 
 //-------------------------------------------------------------------------------------------------
 
+int partab(int x, int y, int k, char c, int damage, int vahed, char h){
+    if (c == '1'){
+
+    }
+    if (c == '2'){
+        int p = 0;
+        for (int i = 1; i <= vahed; i++){
+            if (cell.pixel[k][y + i][x].font == 'S' || cell.pixel[k][y + i][x].font == 'G' || 
+                cell.pixel[k][y + i][x].font == 'U' || cell.pixel[k][y + i][x].font == 'D' ||
+                cell.pixel[k][y + i][x].font == 'F'){
+                    cell.pixel[k][y + i][x].enemyhealth -= damage;
+                    mvprintw(1, 1, "You hited!");
+                    if (cell.pixel[k][y + i][x].enemyhealth <= 0){
+                        cell.pixel[k][y + i][x].font = '.';
+                        cell.pixel[k][y + i][x].previous = '.';        
+                    }
+                    p++;
+                    break;
+            }
+            else if(cell.pixel[k][y + i][x].font == 'O' || cell.pixel[k][y + i][x].font == '-'){
+                cell.pixel[k][y + i - 1][x].font = h;
+                cell.pixel[k][y + i - 1][x].previous = h;
+                mvprintw(y + i - 1, x, "%c", h);
+                p++;
+                break;
+            }
+        }
+        if(!p){
+            cell.pixel[k][y + vahed][x].font = h;
+            cell.pixel[k][y + vahed][x].previous = h;
+            mvprintw(y + vahed, x, "%c", h);
+        }
+    }
+    if (c == '3'){
+        
+    }
+    if (c == '6'){
+        int p = 0;
+        for (int i = 1; i <= vahed; i++){
+            if (cell.pixel[k][y][x + i].font == 'S' || cell.pixel[k][y][x + i].font == 'G' || 
+                cell.pixel[k][y][x + i].font == 'U' || cell.pixel[k][y][x + i].font == 'D' ||
+                cell.pixel[k][y][x + i].font == 'F'){
+                    cell.pixel[k][y][x + i].enemyhealth -= damage;
+                    if (cell.pixel[k][y][x + i].enemyhealth <= 0){
+                        cell.pixel[k][y][x + i].font = '.';
+                        cell.pixel[k][y][x + i].previous = '.';
+                        cell.pixel[k][y][x + i].enemyhealth = 0;        
+                    }
+                    mvprintw(1, 1, "You hited!");
+                    p++;
+                    break;
+            }
+            else if(cell.pixel[k][y][x + i - 1].font == 'O' || cell.pixel[k][y][x + i - 1].font == '|'){
+                cell.pixel[k][y][x + i - 1].font = h;
+                cell.pixel[k][y][x + i - 1].previous = h;
+                mvprintw(y, x + i - 1, "%c", h);
+                p++;
+                break;
+            }
+        }
+        if(!p){
+            cell.pixel[k][y][x + vahed].font = h;
+            cell.pixel[k][y][x + vahed].previous == h;
+            mvprintw(y, x + vahed, "%c", h);
+        }
+    }
+    if (c == '5'){
+        
+    }
+    if (c == '4'){
+        int p = 0;
+        for (int i = 1; i <= vahed; i++){
+            if (cell.pixel[k][y][x - i].font == 'S' || cell.pixel[k][y][x - i].font == 'G' || 
+                cell.pixel[k][y][x - i].font == 'U' || cell.pixel[k][y][x - i].font == 'D' ||
+                cell.pixel[k][y][x - i].font == 'F'){
+                    cell.pixel[k][y][x - i].enemyhealth -= damage;
+                    if (cell.pixel[k][y][x - i].enemyhealth <= 0){
+                        cell.pixel[k][y][x - i].enemyhealth = 0;
+                        cell.pixel[k][y][x - i].font = '.';
+                        cell.pixel[k][y][x - i].previous = '.';
+                    }
+                    mvprintw(1, 1, "You hited!");
+                    p++;
+                    break;
+            }
+            else if(cell.pixel[k][y][x - i + 1].font == 'O' || cell.pixel[k][y][x - i + 1].font == '|'){
+                cell.pixel[k][y][x - i + 1].font = h;
+                cell.pixel[k][y][x - i + 1].previous == h;
+                mvprintw(y, x - i + 1, "%c", h);
+                p++;
+                break;
+            }
+        }
+        if(!p){
+            cell.pixel[k][y][x - vahed].font = h;
+            cell.pixel[k][y][x - vahed].previous == h;
+            mvprintw(y, x - vahed, "%c", h);
+        }
+    }
+    if (c == '7'){
+        
+    }
+    if (c == '8'){
+        int p = 0;
+        for (int i = 1; i <= vahed; i++){
+            if (cell.pixel[k][y - i][x].font == 'S' || cell.pixel[k][y - i][x].font == 'G' || 
+                cell.pixel[k][y - i][x].font == 'U' || cell.pixel[k][y - i][x].font == 'D' ||
+                cell.pixel[k][y - i][x].font == 'F'){
+                    cell.pixel[k][y - i][x].enemyhealth -= damage;
+                    if (cell.pixel[k][y - i][x].enemyhealth <= 0){
+                        cell.pixel[k][y - i][x].font = '.'; 
+                        cell.pixel[k][y - i][x].previous = '.'; 
+                        cell.pixel[k][y - i][x].enemyhealth = 0;
+                    }
+                    mvprintw(1, 1, "You hited!");
+                    p++;
+                    break;
+            }
+            else if(cell.pixel[k][y - i][x].font == 'O' || cell.pixel[k][y - i][x].font == '-'){
+                cell.pixel[k][y - i + 1][x].font = h;
+                cell.pixel[k][y - i + 1][x].previous == h;
+                mvprintw(y - i + 1, x, "%c", h);
+                p++;
+                break;
+            }
+        }
+        if(!p){
+            cell.pixel[k][y - vahed][x].font = h;
+            cell.pixel[k][y - vahed][x].previous == h;
+            mvprintw(y - vahed, x, "%c", h);
+        }
+    }
+    if (c == '9'){
+
+    }
+}
+
+
 
 //-------------------------------------------KEY----------------------------------------
 
@@ -580,6 +720,18 @@ int DFSUG(char c, int damage, int m1, int m2, int n1, int n2 ,int x, int y, int 
 
 
 int key(int y, int x, char c, int k){
+    
+    if (y < goldy2 && y > goldy2 && x < goldx2 && x > goldx1 && k == 3){
+        key(y, x, c, k);
+        clear();
+        mvprintw (17, 70, "Y O U    W ON!!!");
+        getch();
+        refresh();
+        endwin();
+    }
+    
+    
+    
     if (cell.health <= 0){
         return 1;
     }
@@ -888,61 +1040,162 @@ int key(int y, int x, char c, int k){
         attron(COLOR_PAIR(4));
         mvprintw(6, 58, "SPELL MENUE!!!");
         attroff(COLOR_PAIR(4));
-        mvprintw(8, 30, "WEAPON name:");
-        mvprintw(8, 90, "Weapon number:");
-        mvprintw(10, 34, "Mace");
-        mvprintw(10, 94, "%d", cell.gorz);
-        mvprintw(12, 34, "Dagger");
-        mvprintw(12, 94, "%d", cell.khanjar);
-        mvprintw(14, 34, "Majic Wand");
-        mvprintw(14, 94, "%d", cell.asa);
-        mvprintw(16, 34, "Normal Arrow");
-        mvprintw(16, 94, "%d", cell.tir);
-        mvprintw(18, 34, "Sword");
-        mvprintw(18, 94, "%d", cell.shamshir);
+        mvprintw(8, 10, "WEAPON name:");
+        mvprintw(8, 125, "Weapon number:");
+        mvprintw(8, 45, "Symbol:");
+        mvprintw(8, 68, "Range:");
+        mvprintw(8, 95, "Damage:");
+        mvprintw(10, 12, "Short-range weapon:");
+        for(int i = 0; i < 153; i++){
+            mvprintw(11, i, "-");
+        }
+        mvprintw(12, 14, "Mace");
+        mvprintw(12, 127, "Owened!");
+
+        mvprintw(14, 14, "Sword");
+        if (cell.shamshir > 0){
+            mvprintw(14, 127, "Owened!");
+        }
+        else{
+            mvprintw(14, 127, "Not owened!");
+        }
+        for(int i = 0; i < 153; i++){
+            mvprintw(15, i, "-");
+        }
+        
+        mvprintw(18, 12, "Long-range weapon:");
+        for(int i = 0; i < 153; i++){
+            mvprintw(19, i, "-");
+        }
+        mvprintw(20, 14, "Dagger");
+        mvprintw(20, 130, "%d", cell.khanjar);
+        mvprintw(22, 14, "Majic Wand");
+        mvprintw(22, 130, "%d", cell.asa);
+        mvprintw(24, 14, "Normal Arrow");
+        mvprintw(24, 130, "%d", cell.tir);
+        mvprintw(12, 97, "5");
+        mvprintw(14, 97, "10");
+        mvprintw(20, 97, "12");
+        mvprintw(22, 97, "15");
+        mvprintw(24, 97, "5");
+        mvprintw(12, 70, "Nearby houses");
+        mvprintw(14, 70, "Nearby houses");
+        mvprintw(20, 70, "5 houses");
+        mvprintw(22, 70, "10 houses");
+        mvprintw(24, 70, "5 houses");
+        mvprintw(12, 47, "g");
+        mvprintw(14, 47, "s");
+        mvprintw(20, 47, "k");
+        mvprintw(22, 47, "a");
+        mvprintw(24, 47, "t");
+        for(int i = 0; i < 153; i++){
+            mvprintw(25, i, "-");
+        }
         mvprintw(33, 54, "Press enter to resume the game!");
         while(s != 'R'){
-        attron(COLOR_PAIR(4));
-        mvprintw(2 * number + 10, 30, "**");
-        noecho();
-            if(s == 65){
-                mvprintw(10 + 2 * number, 30, "  ");
-                number = ((number + 4) % 5);
-                mvprintw(10 + 2 * number, 30, "**");
-                attroff(COLOR_PAIR(4));
-            }
-            else if(s == 66){
-                mvprintw(10 + 2 * number, 30, "  ");
-                number = (number + 1) % 5;
-                mvprintw(10 + 2 * number, 30, "**");
-                attroff(COLOR_PAIR(4));
-            }
-            else if(s == '5'){
-                attroff(COLOR_PAIR(4));
-                if(number == 0 && cell.gorz > 0){
-                    cell.gorz--;
-                    mvprintw(10, 94, "%d", cell.gorz);
+            attron(COLOR_PAIR(1));
+            mvprintw (32, 60, "                                                                 ");
+            if(s == 'g' && weapon != 1){
+                if (weapon == 0){
+                    zarbeh = 5;
+                    weapon = 1;
+                    mvprintw(32, 60, "You got Mace succesfuly!");
                 }
-                if(number == 1 && cell.khanjar > 0){
-                    cell.khanjar--;
-                    mvprintw(12, 94, "%d", cell.khanjar);
-                }
-                if(number == 2 && cell.asa > 0){
-                    cell.asa--;
-                    mvprintw(14, 94, "%d", cell.asa);
-                }
-                if(number == 3 && cell.tir > 0){
-                    cell.tir--;
-                    mvprintw(16, 94, "%d", cell.tir);
-                }
-                if(number == 4 && cell.shamshir > 0){
-                    cell.shamshir--;
-                    mvprintw(18, 94, "%d", cell.shamshir);
+                else{
+                    mvprintw(32, 60, "You must put your last weapon firt");
                 }
             }
-            move(37, 152);
-            attroff(COLOR_PAIR(4));
-            s = getch();
+            if (s == 'g' && weapon == 1){
+                weapon = 0;
+                mvprintw(32, 60, "You put Mace succesfuly!");
+            }
+            if(s == 's'){
+                if (cell.shamshir > 0 && weapon != 2){
+                    if (weapon == 0){
+                        mvprintw(12, 127, "Owened!");
+                        zarbeh = 10;
+                        weapon = 2;
+                        mvprintw(32, 60, "You got Sword succesfuly!");
+                    }
+                    else{
+                        mvprintw(32, 60, "You must put your last weapon firt");
+                    }
+                }
+                else if (cell.shamshir > 0 && weapon == 2){
+                    weapon = 0;
+                    mvprintw(32, 60, "You put Sword succesfuly!");
+                }
+                else{
+                    mvprintw(32, 60, "You don't have Sword!");
+                }
+            }
+            if (s == 'k'){
+                if(cell.khanjar > 0 && weapon != 3){
+                    if (weapon == 0){
+                        cell.khanjar--;
+                        zarbeh = 12;
+                        weapon = 3;
+                        mvprintw(20, 130, "%d", cell.khanjar);
+                        mvprintw(32, 60, "You got Dagger succesfuly!");
+                    }
+                    else{
+                        mvprintw(32, 60, "You must put your last weapon firt");
+                    }
+                }
+                else if (cell.khanjar > 0 && weapon == 3){
+                    weapon = 0;
+                    mvprintw(32, 60, "You put Dagger succesfuly!");
+                }
+                else{
+                    mvprintw(32, 60, "You don't have Dagger!");
+                }
+            }
+            if(s == 'a'){
+                if(cell.asa > 0 && weapon != 4){
+                    if (weapon == 0){
+                        cell.asa--;
+                        zarbeh = 15;
+                        weapon = 4;
+                        mvprintw(22, 130, "%d", cell.asa);
+                        mvprintw(32, 60, "You got Majic Wand succesfuly!");
+                    }
+                    else{
+                        mvprintw(32, 60, "You must put your last weapon firt");
+                    }
+                }
+                else if (cell.asa > 0 && weapon == 4){
+                    weapon = 0;
+                    mvprintw(32, 60, "You put Majic Wand succesfuly!");
+                }
+                else{
+                    mvprintw(32, 60, "You don't have Majic Wand!");
+                }
+            }
+            if (s == 't'){
+                if(cell.tir > 0 && weapon != 5){
+                    if (weapon == 0){
+                        cell.tir--;
+                        zarbeh = 5;
+                        weapon = 5;
+                        mvprintw(24, 130, "%d", cell.tir);
+                        mvprintw(32, 60, "You got Normal Arrow succesfuly!");
+                    }
+                    else{
+                        mvprintw(32, 60, "You must put your last weapon firt");
+                    }
+                }
+                else if (cell.tir > 0 && weapon == 5){
+                    weapon = 0;
+                    mvprintw(32, 60, "You put Normal Arrow succesfuly!");
+                }
+
+                else{
+                    mvprintw(32, 60, "You don't have Normal Arrow!");
+                }
+            }
+        move(37, 152);
+        attroff(COLOR_PAIR(4));
+        s = getch();
         }
         for(int j = 0; j < 38; j++){
             for(int i = 0; i < 153; i++){
@@ -1056,6 +1309,482 @@ int key(int y, int x, char c, int k){
         c = getch();
         key(y, x, c, k);
     }
+//--------------------------------------------------------weapon----------------------------------------------------------
+    else if (c == 32){
+        if (weapon == 1){
+            if (cell.pixel[k][y + 1][x + 1].font == 'D' || cell.pixel[k][y + 1][x + 1].font == 'F' || 
+                cell.pixel[k][y + 1][x + 1].font == 'U' || cell.pixel[k][y + 1][x + 1].font == 'S' ||
+                cell.pixel[k][y + 1][x + 1].font == 'G'){
+                    if (cell.pixel[k][y + 1][x + 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y + 1][x + 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y + 1][x + 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y + 1][x + 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y + 1][x + 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+
+                    cell.pixel[k][y + 1][x + 1].enemyhealth -= 5;
+                    if (cell.pixel[k][y + 1][x + 1].enemyhealth <= 0){
+                        cell.pixel[k][y + 1][x + 1].font = '.';
+                        cell.pixel[k][y + 1][x + 1].previous = '.';
+                        cell.pixel[k][y + 1][x + 1].enemyhealth = 0;
+                    }
+                    mvprintw(y + 1, x + 1, "%c", cell.pixel[k][y + 1][x + 1].font);
+            }
+            if (cell.pixel[k][y][x + 1].font == 'D' || cell.pixel[k][y][x + 1].font == 'F' || 
+                cell.pixel[k][y][x + 1].font == 'U' || cell.pixel[k][y][x + 1].font == 'S' ||
+                cell.pixel[k][y][x + 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y][x + 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y][x + 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y][x + 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y][x + 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y][x + 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y][x + 1].enemyhealth -= 5;
+                    if (cell.pixel[k][y][x + 1].enemyhealth <= 0){
+                        cell.pixel[k][y][x + 1].font = '.';
+                        cell.pixel[k][y][x + 1].previous = '.';
+                        cell.pixel[k][y][x + 1].enemyhealth = 0;
+                    }
+                    mvprintw(y, x + 1, "%c", cell.pixel[k][y][x + 1].font);
+            }
+            if (cell.pixel[k][y + 1][x].font == 'D' || cell.pixel[k][y + 1][x].font == 'F' || 
+                cell.pixel[k][y + 1][x].font == 'U' || cell.pixel[k][y + 1][x].font == 'S' ||
+                cell.pixel[k][y + 1][x].font == 'G'){
+                    
+                    if (cell.pixel[k][y + 1][x].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y + 1][x].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y + 1][x].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y + 1][x].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y + 1][x].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y + 1][x].enemyhealth -= 5;
+                    if (cell.pixel[k][y + 1][x].enemyhealth <= 0){
+                        cell.pixel[k][y + 1][x].font = '.';
+                        cell.pixel[k][y + 1][x].previous = '.';
+                        cell.pixel[k][y + 1][x].enemyhealth = 0;
+                    }
+                    mvprintw(y + 1, x, "%c", cell.pixel[k][y + 1][x].font);
+            }
+            if (cell.pixel[k][y - 1][x + 1].font == 'D' || cell.pixel[k][y - 1][x + 1].font == 'F' || 
+                cell.pixel[k][y - 1][x + 1].font == 'U' || cell.pixel[k][y - 1][x + 1].font == 'S' ||
+                cell.pixel[k][y - 1][x + 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y - 1][x + 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y - 1][x + 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y - 1][x + 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y - 1][x + 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y - 1][x + 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y - 1][x + 1].enemyhealth -= 5;
+                    if (cell.pixel[k][y - 1][x + 1].enemyhealth <= 0){
+                        cell.pixel[k][y - 1][x + 1].font = '.';
+                        cell.pixel[k][y - 1][x + 1].previous = '.';
+                        cell.pixel[k][y - 1][x + 1].enemyhealth = 0;
+                    }
+                    mvprintw(y - 1, x + 1, "%c", cell.pixel[k][y - 1][x + 1].font);
+            }
+            if (cell.pixel[k][y - 1][x - 1].font == 'D' || cell.pixel[k][y - 1][x - 1].font == 'F' || 
+                cell.pixel[k][y - 1][x - 1].font == 'U' || cell.pixel[k][y - 1][x - 1].font == 'S' ||
+                cell.pixel[k][y - 1][x - 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y - 1][x - 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y - 1][x - 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y - 1][x - 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y - 1][x - 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y - 1][x - 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y - 1][x - 1].enemyhealth -= 5;
+                    if (cell.pixel[k][y - 1][x - 1].enemyhealth <= 0){
+                        cell.pixel[k][y - 1][x - 1].font = '.';
+                        cell.pixel[k][y - 1][x - 1].previous = '.';
+                        cell.pixel[k][y - 1][x - 1].enemyhealth = 0;
+                    }
+                    mvprintw(y - 1, x - 1, "%c", cell.pixel[k][y - 1][x - 1].font);
+            }
+            if (cell.pixel[k][y - 1][x].font == 'D' || cell.pixel[k][y - 1][x].font == 'F' || 
+                cell.pixel[k][y - 1][x].font == 'U' || cell.pixel[k][y - 1][x].font == 'S' ||
+                cell.pixel[k][y - 1][x].font == 'G'){
+                   
+                    if (cell.pixel[k][y - 1][x].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y - 1][x].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y - 1][x].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y - 1][x].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y - 1][x].font == 'U'){
+                        cell.health -= 25;
+                    }
+                   
+                    cell.pixel[k][y - 1][x].enemyhealth -= 5;
+                    if (cell.pixel[k][y - 1][x].enemyhealth <= 0){
+                        cell.pixel[k][y - 1][x].font = '.';
+                        cell.pixel[k][y - 1][x].previous = '.';
+                        cell.pixel[k][y - 1][x].enemyhealth = 0;
+                    }
+                    mvprintw(y - 1, x, "%c", cell.pixel[k][y - 1][x].font);
+            }
+            if (cell.pixel[k][y + 1][x - 1].font == 'D' || cell.pixel[k][y + 1][x - 1].font == 'F' || 
+                cell.pixel[k][y + 1][x - 1].font == 'U' || cell.pixel[k][y + 1][x - 1].font == 'S' ||
+                cell.pixel[k][y + 1][x - 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y + 1][x - 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y + 1][x - 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y + 1][x - 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y + 1][x - 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y + 1][x - 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y + 1][x - 1].enemyhealth -= 5;
+                    if (cell.pixel[k][y + 1][x - 1].enemyhealth <= 0){
+                        cell.pixel[k][y + 1][x - 1].font = '.';
+                        cell.pixel[k][y + 1][x - 1].previous = '.';
+                        cell.pixel[k][y + 1][x - 1].enemyhealth = 0;
+                    }
+                    mvprintw(y + 1, x - 1, "%c", cell.pixel[k][y + 1][x - 1].font);
+            }
+            if (cell.pixel[k][y][x - 1].font == 'D' || cell.pixel[k][y][x - 1].font == 'F' || 
+                cell.pixel[k][y][x - 1].font == 'U' || cell.pixel[k][y][x - 1].font == 'S' ||
+                cell.pixel[k][y][x - 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y][x - 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y][x - 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y][x - 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y][x - 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y][x - 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y][x + 1].enemyhealth -= 5;
+                    if (cell.pixel[k][y][x - 1].enemyhealth <= 0){
+                        cell.pixel[k][y][x - 1].font = '.';
+                        cell.pixel[k][y][x - 1].previous = '.';
+                        cell.pixel[k][y][x - 1].enemyhealth = 0;
+                    }
+                mvprintw(y, x - 1, "%c", cell.pixel[k][y][x - 1].font);
+            }
+        }
+        if (weapon == 2){
+            if (cell.pixel[k][y + 1][x + 1].font == 'D' || cell.pixel[k][y + 1][x + 1].font == 'F' || 
+                cell.pixel[k][y + 1][x + 1].font == 'U' || cell.pixel[k][y + 1][x + 1].font == 'S' ||
+                cell.pixel[k][y + 1][x + 1].font == 'G'){
+                    if (cell.pixel[k][y + 1][x + 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y + 1][x + 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y + 1][x + 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y + 1][x + 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y + 1][x + 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+
+                    cell.pixel[k][y + 1][x + 1].enemyhealth -= 10;
+                    if (cell.pixel[k][y + 1][x + 1].enemyhealth <= 0){
+                        cell.pixel[k][y + 1][x + 1].font = '.';
+                        cell.pixel[k][y + 1][x + 1].previous = '.';
+                        cell.pixel[k][y + 1][x + 1].enemyhealth = 0;
+                    }
+                    mvprintw(y + 1, x + 1, "%c", cell.pixel[k][y + 1][x + 1].font);
+            }
+            if (cell.pixel[k][y][x + 1].font == 'D' || cell.pixel[k][y][x + 1].font == 'F' || 
+                cell.pixel[k][y][x + 1].font == 'U' || cell.pixel[k][y][x + 1].font == 'S' ||
+                cell.pixel[k][y][x + 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y][x + 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y][x + 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y][x + 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y][x + 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y][x + 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y][x + 1].enemyhealth -= 10;
+                    if (cell.pixel[k][y][x + 1].enemyhealth <= 0){
+                        cell.pixel[k][y][x + 1].font = '.';
+                        cell.pixel[k][y][x + 1].previous = '.';
+                        cell.pixel[k][y][x + 1].enemyhealth = 0;
+                    }
+                    mvprintw(y, x + 1, "%c", cell.pixel[k][y][x + 1].font);
+            }
+            if (cell.pixel[k][y + 1][x].font == 'D' || cell.pixel[k][y + 1][x].font == 'F' || 
+                cell.pixel[k][y + 1][x].font == 'U' || cell.pixel[k][y + 1][x].font == 'S' ||
+                cell.pixel[k][y + 1][x].font == 'G'){
+                    
+                    if (cell.pixel[k][y + 1][x].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y + 1][x].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y + 1][x].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y + 1][x].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y + 1][x].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y + 1][x].enemyhealth -= 10;
+                    if (cell.pixel[k][y + 1][x].enemyhealth <= 0){
+                        cell.pixel[k][y + 1][x].font = '.';
+                        cell.pixel[k][y + 1][x].previous = '.';
+                        cell.pixel[k][y + 1][x].enemyhealth = 0;
+                    }
+                    mvprintw(y + 1, x, "%c", cell.pixel[k][y + 1][x].font);
+            }
+            if (cell.pixel[k][y - 1][x + 1].font == 'D' || cell.pixel[k][y - 1][x + 1].font == 'F' || 
+                cell.pixel[k][y - 1][x + 1].font == 'U' || cell.pixel[k][y - 1][x + 1].font == 'S' ||
+                cell.pixel[k][y - 1][x + 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y - 1][x + 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y - 1][x + 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y - 1][x + 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y - 1][x + 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y - 1][x + 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y - 1][x + 1].enemyhealth -= 10;
+                    if (cell.pixel[k][y - 1][x + 1].enemyhealth <= 0){
+                        cell.pixel[k][y - 1][x + 1].font = '.';
+                        cell.pixel[k][y - 1][x + 1].previous = '.';
+                        cell.pixel[k][y - 1][x + 1].enemyhealth = 0;
+                    }
+                    mvprintw(y - 1, x + 1, "%c", cell.pixel[k][y - 1][x + 1].font);
+            }
+            if (cell.pixel[k][y - 1][x - 1].font == 'D' || cell.pixel[k][y - 1][x - 1].font == 'F' || 
+                cell.pixel[k][y - 1][x - 1].font == 'U' || cell.pixel[k][y - 1][x - 1].font == 'S' ||
+                cell.pixel[k][y - 1][x - 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y - 1][x - 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y - 1][x - 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y - 1][x - 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y - 1][x - 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y - 1][x - 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y - 1][x - 1].enemyhealth -= 10;
+                    if (cell.pixel[k][y - 1][x - 1].enemyhealth <= 0){
+                        cell.pixel[k][y - 1][x - 1].font = '.';
+                        cell.pixel[k][y - 1][x - 1].previous = '.';
+                        cell.pixel[k][y - 1][x - 1].enemyhealth = 0;
+                    }
+                    mvprintw(y - 1, x - 1, "%c", cell.pixel[k][y - 1][x - 1].font);
+            }
+            if (cell.pixel[k][y - 1][x].font == 'D' || cell.pixel[k][y - 1][x].font == 'F' || 
+                cell.pixel[k][y - 1][x].font == 'U' || cell.pixel[k][y - 1][x].font == 'S' ||
+                cell.pixel[k][y - 1][x].font == 'G'){
+                   
+                    if (cell.pixel[k][y - 1][x].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y - 1][x].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y - 1][x].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y - 1][x].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y - 1][x].font == 'U'){
+                        cell.health -= 25;
+                    }
+                   
+                    cell.pixel[k][y - 1][x].enemyhealth -= 10;
+                    if (cell.pixel[k][y - 1][x].enemyhealth <= 0){
+                        cell.pixel[k][y - 1][x].font = '.';
+                        cell.pixel[k][y - 1][x].previous = '.';
+                        cell.pixel[k][y - 1][x].enemyhealth = 0;
+                    }
+                    mvprintw(y - 1, x, "%c", cell.pixel[k][y - 1][x].font);
+            }
+            if (cell.pixel[k][y + 1][x - 1].font == 'D' || cell.pixel[k][y + 1][x - 1].font == 'F' || 
+                cell.pixel[k][y + 1][x - 1].font == 'U' || cell.pixel[k][y + 1][x - 1].font == 'S' ||
+                cell.pixel[k][y + 1][x - 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y + 1][x - 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y + 1][x - 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y + 1][x - 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y + 1][x - 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y + 1][x - 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y + 1][x - 1].enemyhealth -= 10;
+                    if (cell.pixel[k][y + 1][x - 1].enemyhealth <= 0){
+                        cell.pixel[k][y + 1][x - 1].font = '.';
+                        cell.pixel[k][y + 1][x - 1].previous = '.';
+                        cell.pixel[k][y + 1][x - 1].enemyhealth = 0;
+                    }
+                    mvprintw(y + 1, x - 1, "%c", cell.pixel[k][y + 1][x - 1].font);
+            }
+            if (cell.pixel[k][y][x - 1].font == 'D' || cell.pixel[k][y][x - 1].font == 'F' || 
+                cell.pixel[k][y][x - 1].font == 'U' || cell.pixel[k][y][x - 1].font == 'S' ||
+                cell.pixel[k][y][x - 1].font == 'G'){
+                    
+                    if (cell.pixel[k][y][x - 1].font == 'D'){
+                        cell.health -= 5;
+                    }
+                    if (cell.pixel[k][y][x - 1].font == 'F'){
+                        cell.health -= 10;
+                    }
+                    if (cell.pixel[k][y][x - 1].font == 'G'){
+                        cell.health -= 15;
+                    }
+                    if (cell.pixel[k][y][x - 1].font == 'S'){
+                        cell.health -= 20;
+                    }
+                    if (cell.pixel[k][y][x - 1].font == 'U'){
+                        cell.health -= 25;
+                    }
+                    
+                    cell.pixel[k][y][x + 1].enemyhealth -= 10;
+                    if (cell.pixel[k][y][x - 1].enemyhealth <= 0){
+                        cell.pixel[k][y][x - 1].font = '.';
+                        cell.pixel[k][y][x - 1].previous = '.';
+                        cell.pixel[k][y][x - 1].enemyhealth = 0;
+                    }
+                mvprintw(y, x - 1, "%c", cell.pixel[k][y][x - 1].font);
+            }
+        }
+        if (weapon == 3){
+            char h = getch();
+            partab(x, y, k, h, 12, 5, 'k');
+            c = getch();
+            key(x, y, c, k);
+            return 1;
+        }
+        if (weapon == 4){
+            char h = getch();
+            partab(x, y, k, h, 15, 10, 'a');
+            c = getch();
+            key(x, y, c, k);
+            return 1;
+        }
+        if (weapon == 5){
+            char h = getch();
+            partab(x, y, k, h, 5, 5, 't');
+            c = getch();
+            key(x, y, c, k);
+            return 1;
+        }
+    }
+
+//------------------------------------------------------------------------------------------------------------------------
     if (k == 3){
         if((x <= goldx2 && x >= goldx1) && (y <= goldy2 && y >= goldy1)){
             attron(COLOR_PAIR(5));
@@ -1170,23 +1899,23 @@ int key(int y, int x, char c, int k){
       //      key_show(y, x, f, k);
        }
     }
-    cell.score = 2 * cell.gold;
-    if(cell.pixel[k][y][x].previous == 'g'){
-        f = getch();
-        move(37, 152);
-        if(f == '5'){
-            cell.pixel[k][y][x].previous = '.';
-            cell.gorz++;
-            //f = getch();
-        }
-    }
+
+//----------------------------------------------------score---------------------------------------------------
+
+    cell.score += 2 * cell.gold;
+
+//--------------------------------------------------------------------------------------------------------------
     if(cell.pixel[k][y][x].previous == 't'){
         f = getch();
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            cell.tir++;
-            //f = getch();
+            if (cell.pixel[k][y][x].tedad == 1){
+                cell.tir += 20;
+            }
+            if (cell.pixel[k][y][x].tedad == 0){
+                cell.tir++;
+            }
         }
     }
     if(cell.pixel[k][y][x].previous == 'a'){
@@ -1194,8 +1923,12 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            cell.asa++;
-            //f = getch();
+            if (cell.pixel[k][y][x].tedad == 1){
+                cell.asa += 15;
+            }
+            if (cell.pixel[k][y][x].tedad == 0){
+                cell.asa++;
+            }
         }
     }
     if(cell.pixel[k][y][x].previous == 's'){
@@ -1204,7 +1937,6 @@ int key(int y, int x, char c, int k){
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
             cell.shamshir++;
-            //f = getch();
         }
     }
     if(cell.pixel[k][y][x].previous == 'k'){
@@ -1212,8 +1944,12 @@ int key(int y, int x, char c, int k){
         move(37, 152);
         if(f == '5'){
             cell.pixel[k][y][x].previous = '.';
-            cell.khanjar++;
-            //f = getch();
+            if (cell.pixel[k][y][x].tedad == 1){
+                cell.khanjar += 10;
+            }
+            if (cell.pixel[k][y][x].tedad == 0){
+                cell.khanjar++;
+            }
         }
     }
     if(cell.pixel[k][y][x].previous == 'f'){
@@ -1601,24 +2337,20 @@ int jadval(int ax, int bx, int ay, int by, int k){
 		for(int j = ay + 1; j < by; j++){
             int randomw = Random_number(0, 39) / 39;
             if(randomw){
-                int randomi = Random_number(1, 5);
+                int randomi = Random_number(1, 4);
                 if(randomi == 1){
-                    cell.pixel[k][j][i].font = 'g';
-                    cell.pixel[k][j][i].flag = 15;
-                }
-                if(randomi == 2){
                     cell.pixel[k][j][i].font = 'k';
                     cell.pixel[k][j][i].flag = 16;
                 }
-                if(randomi == 3){
+                if(randomi == 2){
                     cell.pixel[k][j][i].font = 'a';
                     cell.pixel[k][j][i].flag = 17;
                 }
-                if(randomi == 4){
+                if(randomi == 3){
                     cell.pixel[k][j][i].font = 't';
                     cell.pixel[k][j][i].flag = 18;
                 }
-                if(randomi == 5){
+                if(randomi == 4){
                     cell.pixel[k][j][i].font = 's';
                     cell.pixel[k][j][i].flag = 19;
                 }
@@ -2794,6 +3526,7 @@ int Login(){
     if(number == 1){
         cell.exp++;
         Main_game(0);
+        return 6;
     
     }
 
@@ -2840,7 +3573,8 @@ int Login(){
         }
         fseek(fptr,(pp * sizeof(pix)), SEEK_SET);
         fwrite(&cell,sizeof(pix), 1,fptr);
-        fclose(fptr);        
+        fclose(fptr);    
+        return 6;    
     }
 
     else if(number == 3){
@@ -2874,6 +3608,7 @@ int main(){
            cell.pixel[l][j][i].namayesh = 0;
            cell.pixel[l][j][i].enemyhealth = 0;
            cell.pixel[l][j][i].number = 0;
+           cell.pixel[l][j][i].tedad = 1;
     }
     cell.thealthy = 0, cell.tspeed = 0, cell.tdamage = 0;
     cell.tir = 0, cell.gorz = 0, cell.khanjar = 0, cell.asa = 0, cell.shamshir = 0, cell.mainfood = 0;
@@ -2934,9 +3669,21 @@ int main(){
         number++;
         attroff(COLOR_PAIR(4));
         if(number == 1){
+            int a = 0;
             if (New_user() == 1){
-                Login();
+                a = Login();
    
+            }
+            if (a == 6){
+                char c = getch();
+                do{
+                clear();
+                mvprintw(17, 70, "G A M E    O V E R ...");
+                c = getch();
+                refresh();
+                }while(c != 27);
+                endwin();
+                return 0;
             }
         }
         else if(number == 2){
@@ -2945,6 +3692,12 @@ int main(){
             int a = Login();
 
             if(a == 6){
+                do{
+                clear();
+                mvprintw(17, 70, "G A M E    O V E R ...");
+                c = getch();
+                refresh();
+                }while(c != 27);
                 refresh();
                 endwin();
                 return 0;
