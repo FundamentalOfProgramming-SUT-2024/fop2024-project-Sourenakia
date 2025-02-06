@@ -1261,6 +1261,7 @@ int key(int y, int x, char c, int k){
                         //cell.foodmajic--;
                         mvprintw(12, 94, "%d", cell.foodmajic);
                         cell.health++;
+                        cell.foodmajic--;
                     }
                     if(number == 2 && cell.foodperfect > 0){
                         te++;
@@ -1979,7 +1980,7 @@ int key(int y, int x, char c, int k){
             }
         }
     }
-    if(cell.pixel[k][y][x].previous == 'm'){
+    if(cell.pixel[k][y][x].previous == 'p'){
         f = getch();
         move(37, 152);
         if(f == '5' && (cell.foodmajic + cell.foodperfect + cell.mainfood) < 6){
