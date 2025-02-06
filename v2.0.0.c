@@ -15,6 +15,8 @@ typedef struct{
     int check;
     int namayesh;
     int healthy;
+    int enemyhealth;
+    int number;
 }mainpixel;
 
 
@@ -47,6 +49,7 @@ int goldx1 = 0, goldx2 = 0, goldy1 = 0, goldy2 = 0;
 int telesmx1, telesmx2, telesmy1, telesmy2;
 time_t start_time;
 time_t end_time;
+int zarbeh = 5;
 
 int Login();
  
@@ -73,7 +76,7 @@ void update_screen(int k){
 	for(int j = 0; j < 38; j++){
 		for(int i = 0; i < 153; i++){
             if(cell.pixel[k][j][i].font != '^'){
-			    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+			    mvprintw(j, i, "%c", cell.pixel[k][j][i].previous);
             }
             else{
                 mvprintw(j, i, ".");
@@ -91,7 +94,7 @@ void update_screen(int k){
         for(int j = goldy1; j <= goldy2; j++){
             for(int i = goldx1; i <= goldx2; i++){
                 if(cell.pixel[3][j][i].font != '^')
-                    mvprintw(j, i, "%c", cell.pixel[3][j][i].font);
+                    mvprintw(j, i, "%c", cell.pixel[3][j][i].previous);
                 else{
                     mvprintw(j, i, ".");
                 }
@@ -104,8 +107,8 @@ void update_screen(int k){
         attron(COLOR_PAIR(8));
         for(int j = telesmy1; j <= telesmy2; j++){
             for(int i = telesmx1; i <= telesmx2; i++){
-                if(cell.pixel[k][j][i].font != '^')
-                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                if(cell.pixel[k][j][i].previous != '^')
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].previous);
                 else{
                     mvprintw(j, i, ".");
                 }
@@ -115,10 +118,10 @@ void update_screen(int k){
         attron(COLOR_PAIR(1));
     }
 }
+//-----------------------------------------harkat hayola--------------------------------
 
-//------------------------------------------show----------------------------------------
-
-int mahdood_room(int y, int x, int k){
+int Harkat(int y, int x, int k){
+    /*/
     int m1 = y, n1 = x, m2 = y, n2 = x;
     for(int j = y; j < 37; j++){
         if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
@@ -144,21 +147,157 @@ int mahdood_room(int y, int x, int k){
             break;
         }
     }
-
-    for(int j = 0; j < 37; j++){
-        for(int i = 0; i < 153; i++){
-            attron(COLOR_PAIR(1));
-            if(cell.pixel[k][j][i].namayesh == 1){
-                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
-            }
-            if(cell.pixel[k][j][i].font == '@'){
-                attron(COLOR_PAIR(herocolor));
-                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
-                attroff(COLOR_PAIR(herocolor));
-                attron(COLOR_PAIR(1));
+    int x1, y1;
+    for (int j = m1; j < m2; j++){
+        for(int i = n1; i < n2; i++){
+            if (cell.pixel[k][j][i].font == '@'){
+                x1 = i;
+                y1 = j;
             }
         }
     }
+    for(int j = m1 + 1; j < m2; j++){
+        for(int i = n1 + 1; i < n2; i++){
+            if (cell.pixel[k][j][i].font == 'D' || cell.pixel[k][j][i].font == 'F' || 
+                cell.pixel[k][j][i].font == 'S'){
+                if(x1 > i){
+                    if (y1 > j){
+                        cell.pixel[k][j + 1][i + 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if (y1 < j){
+                        cell.pixel[k][j - 1][i + 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if(y1 == j){
+                        cell.pixel[k][j][i + 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                }
+                else if (x1 < i){
+                    if (y1 > j){
+                        cell.pixel[k][j + 1][i - 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if (y1 < j){
+                        cell.pixel[k][j - 1][i - 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if(y1 == j){
+                        cell.pixel[k][j][i - 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                }
+                else if (x1 == i){
+                    if (y1 > j){
+                        cell.pixel[k][j + 1][i].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if (y1 < j){
+                        cell.pixel[k][j - 1][i].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if(y1 == j){
+                        cell.pixel[k][j][i].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                }
+            }
+        }
+    }
+    */
+}
+
+//------------------------------------------show----------------------------------------
+
+int mahdood_room(int y, int x, int k){
+    
+    int m1 = y, n1 = x, m2 = y, n2 = x;
+    for(int j = y; j < 37; j++){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+            m2 = j;
+            break;
+        }
+    }
+    for(int j = y; j > 0; j--){
+        if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+            m1 = j;
+            break;
+        }
+    }
+    for(int i = x; i < 153; i++){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+            n2 = i;
+            break;
+        }
+    }
+    for(int i = x; i > 0; i--){
+        if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+            n1 = i;
+            break;
+        }
+    }
+    int x1, y1;
+    for (int j = m1; j < m2; j++){
+        for(int i = n1; i < n2; i++){
+            if (cell.pixel[k][j][i].font == '@'){
+                x1 = i;
+                y1 = j;
+            }
+        }
+    }
+    /*/
+    for(int j = m1 + 1; j < m2; j++){
+        for(int i = n1 + 1; i < n2; i++){
+            if (cell.pixel[k][j][i].font == 'D' || cell.pixel[k][j][i].font == 'F' || 
+                cell.pixel[k][j][i].font == 'S'){
+                if(x1 > i){
+                    if (y1 > j){
+                        cell.pixel[k][j + 1][i + 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if (y1 < j){
+                        cell.pixel[k][j - 1][i + 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if(y1 == j){
+                        cell.pixel[k][j][i + 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                }
+                else if (x1 < i){
+                    if (y1 > j){
+                        cell.pixel[k][j + 1][i - 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if (y1 < j){
+                        cell.pixel[k][j - 1][i - 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if(y1 == j){
+                        cell.pixel[k][j][i - 1].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                }
+                else if (x1 == i){
+                    if (y1 > j){
+                        cell.pixel[k][j + 1][i].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if (y1 < j){
+                        cell.pixel[k][j - 1][i].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                    else if(y1 == j){
+                        cell.pixel[k][j][i].font = cell.pixel[k][j][i].font;
+                        cell.pixel[k][j][i].font = '.';
+                    }
+                }
+            }
+        }
+    }
+
+    */
 
     for(int j = m1; j <= m2; j++){
         for(int i = n1; i <= n2; i++){
@@ -181,7 +320,7 @@ int mahdood_room(int y, int x, int k){
             }
             if(cell.pixel[k][j][i].font == '@'){
                 attron(COLOR_PAIR(herocolor));
-                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].previous);
                 attroff(COLOR_PAIR(herocolor));
                 attron(COLOR_PAIR(1));
             }
@@ -192,7 +331,7 @@ int mahdood_room(int y, int x, int k){
             attron(COLOR_PAIR(5));
             for(int j = goldy1; j <= goldy2; j++){
                 for(int i = goldx1; i <= goldx2; i++){
-                    if(cell.pixel[3][j][i].font != '^')
+                    if(cell.pixel[3][j][i].previous != '^')
                         mvprintw(j, i, "%c", cell.pixel[3][j][i].font);
                     else{
                         mvprintw(j, i, ".");
@@ -208,7 +347,7 @@ int mahdood_room(int y, int x, int k){
         for(int j = telesmy1; j <= telesmy2; j++){
             for(int i = telesmx1; i <= telesmx2; i++){
                 if(cell.pixel[k][j][i].font != '^')
-                    mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                    mvprintw(j, i, "%c", cell.pixel[k][j][i].previous);
                 else{
                     mvprintw(j, i, ".");
                 }
@@ -217,6 +356,7 @@ int mahdood_room(int y, int x, int k){
         attroff(COLOR_PAIR(8));
         attron(COLOR_PAIR(1));
     }
+    
     move(37, 152);
 }
 
@@ -256,18 +396,199 @@ int Rahroh_mahdood(int y, int x, int k){
     }
     move(37, 152);
 }
+//----------------------------------------DFS----------------------------------------------------
+
+int DFSUG(char c, int damage, int m1, int m2, int n1, int n2 ,int x, int y, int k){
+    int count = 0;
+    
+    for (int j = m1 + 1; j < m2; j++){
+        for(int i = n1 + 1; i < n2; i++){
+            if (cell.pixel[k][j][i].previous == c){
+                if(c == 'U' || c == 'G'){
+                    if (cell.pixel[k][j][i].number > 4){
+                        count++;
+                        break;
+                    }
+                }
+                else if(c == 'D' || c == 'F'){
+                    if (cell.pixel[k][j][i].number > 2){
+                        count++;
+                        break;
+                    }
+                }
+                if (x < i){
+                    if (y < j){
+                        if (cell.pixel[k][j - 1][i - 1].font == '@'){
+                            cell.health -= damage;
+                        }
+                        else if(cell.pixel[k][j - 1][i - 1].font != 'O' && cell.pixel[k][j - 1][i - 1].font != 'S' &&
+                                cell.pixel[k][j - 1][i - 1].font != 'F' && cell.pixel[k][j - 1][i - 1].font != 'U' &&
+                                cell.pixel[k][j - 1][i - 1].font != 'G' && cell.pixel[k][j - 1][i - 1].font != 'D'){
+                            cell.pixel[k][j - 1][i - 1].font = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j - 1][i - 1].previous = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i].previous = '.';
+                            cell.pixel[k][j][i].font = '.';
+                            cell.pixel[k][j - 1][i - 1].enemyhealth = cell.pixel[k][j][i].enemyhealth;
+                            cell.pixel[k][j - 1][i - 1].number = cell.pixel[k][j][i].number + 1;
+                            count++;
+                            break;
+                        }
+                    }
+                    else if (y > j){
+                        if (cell.pixel[k][j + 1][i - 1].font == '@'){
+                            cell.health -= damage;
+                        }
+                        else if(cell.pixel[k][j + 1][i - 1].font != 'O' && cell.pixel[k][j + 1][i + 1].font != 'S' &&
+                                cell.pixel[k][j + 1][i - 1].font != 'F' && cell.pixel[k][j + 1][i + 1].font != 'U' &&
+                                cell.pixel[k][j + 1][i - 1].font != 'G' && cell.pixel[k][j + 1][i - 1].font != 'D'){
+                            cell.pixel[k][j + 1][i - 1].font = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j + 1][i - 1].previous = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i].previous = '.';
+                            cell.pixel[k][j][i].font = '.';
+                            cell.pixel[k][j + 1][i - 1].enemyhealth = cell.pixel[k][j][i].enemyhealth;
+                            cell.pixel[k][j + 1][i - 1].number = cell.pixel[k][j][i].number + 1;
+                            count++;
+                            break;
+                        }
+                    }
+                    else if (y == j){
+                        if (cell.pixel[k][j][i - 1].font == '@'){
+                            cell.health -= damage;
+                        }
+                        else if(cell.pixel[k][j][i - 1].font != 'O' && cell.pixel[k][j][i - 1].font != 'S' &&
+                                cell.pixel[k][j][i - 1].font != 'F' && cell.pixel[k][j][i - 1].font != 'U' &&
+                                cell.pixel[k][j][i - 1].font != 'G' && cell.pixel[k][j][i - 1].font != 'G'){
+                            cell.pixel[k][j][i - 1].font = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i - 1].previous = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i].previous = '.';
+                            cell.pixel[k][j][i].font = '.';
+                            cell.pixel[k][j][i - 1].enemyhealth = cell.pixel[k][j][i].enemyhealth;
+                            cell.pixel[k][j][i - 1].number = cell.pixel[k][j][i].number + 1;
+                            count++;
+                            break;
+                        }
+                    }
+                }
+                else if (x > i){
+                    if (y > j){
+                        if (cell.pixel[k][j + 1][i + 1].font == '@'){
+                            cell.health -= damage;
+                        }
+                        else if(cell.pixel[k][j + 1][i + 1].font != 'O' && cell.pixel[k][j + 1][i + 1].font != 'S' &&
+                                cell.pixel[k][j + 1][i + 1].font != 'F' && cell.pixel[k][j + 1][i + 1].font != 'U' &&
+                                cell.pixel[k][j + 1][i + 1].font != 'G' && cell.pixel[k][j + 1][i + 1].font != 'D'){
+                            cell.pixel[k][j + 1][i + 1].font = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j + 1][i + 1].previous = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i].previous = '.';
+                            cell.pixel[k][j][i].font = '.';
+                            cell.pixel[k][j + 1][i + 1].enemyhealth = cell.pixel[k][j][i].enemyhealth;
+                            cell.pixel[k][j + 1][i + 1].number = cell.pixel[k][j][i].number + 1;
+                            count++;
+                            break;
+                        }
+                    }
+                    else if (y < j){
+                        if (cell.pixel[k][j - 1][i + 1].font == '@'){
+                            cell.health -= damage;
+                        }
+                        else if(cell.pixel[k][j - 1][i + 1].font != 'O' && cell.pixel[k][j - 1][i + 1].font != 'S' &&
+                                cell.pixel[k][j - 1][i + 1].font != 'F' && cell.pixel[k][j - 1][i + 1].font != 'U' &&
+                                cell.pixel[k][j - 1][i + 1].font != 'G' && cell.pixel[k][j - 1][i + 1].font != 'D'){
+                            cell.pixel[k][j - 1][i + 1].font = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j - 1][i + 1].previous = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i].previous = '.';
+                            cell.pixel[k][j][i].font = '.';
+                            cell.pixel[k][j - 1][i + 1].enemyhealth = cell.pixel[k][j][i].enemyhealth;
+                            cell.pixel[k][j - 1][i + 1].number = cell.pixel[k][j][i].number + 1;
+                            count++;
+                            break;
+                        }
+                    }
+                    if (y == j){
+                        if (cell.pixel[k][j][i + 1].font == '@'){
+                            cell.health -= damage;
+                        }
+                        else if(cell.pixel[k][j][i + 1].font != 'O' && cell.pixel[k][j][i + 1].font != 'S' &&
+                                cell.pixel[k][j][i + 1].font != 'F' && cell.pixel[k][j][i + 1].font != 'U' &&
+                                cell.pixel[k][j][i + 1].font != 'G' && cell.pixel[k][j][i + 1].font != 'D'){
+                            cell.pixel[k][j][i + 1].font = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i + 1].previous = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i].previous = '.';
+                            cell.pixel[k][j][i].font = '.';
+                            cell.pixel[k][j][i + 1].enemyhealth = cell.pixel[k][j][i].enemyhealth;
+                            cell.pixel[k][j][i + 1].number = cell.pixel[k][j][i].number + 1;
+                            count++;
+                            break;
+                        }
+                    }
+                }
+                else if(x == i){
+                    if (y > j){
+                        if (cell.pixel[k][j + 1][i].font == '@'){
+                            cell.health -= damage;
+                        }
+                        else if(cell.pixel[k][j + 1][i].font != 'O' && cell.pixel[k][j + 1][i].font != 'S' &&
+                                cell.pixel[k][j + 1][i].font != 'F' && cell.pixel[k][j + 1][i].font != 'U' &&
+                                cell.pixel[k][j + 1][i].font != 'G' && cell.pixel[k][j + 1][i].font != 'D'){
+                            cell.pixel[k][j + 1][i].font = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j + 1][i].previous = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i].previous = '.';
+                            cell.pixel[k][j][i].font = '.';
+                            cell.pixel[k][j + 1][i].enemyhealth = cell.pixel[k][j][i].enemyhealth;
+                            cell.pixel[k][j + 1][i].number = cell.pixel[k][j][i].number + 1;
+                            count++;
+                            break;
+                        }
+                    }
+                    else if (y < j){
+                        if (cell.pixel[k][j - 1][i].font == '@'){
+                            cell.health -= damage;
+                        }
+                        else if(cell.pixel[k][j - 1][i].font != 'O' && cell.pixel[k][j - 1][i].font != 'S' &&
+                                cell.pixel[k][j - 1][i].font != 'F' && cell.pixel[k][j - 1][i].font != 'U' &&
+                                cell.pixel[k][j - 1][i].font != 'G' && cell.pixel[k][j - 1][i].font != 'D'){
+                            cell.pixel[k][j - 1][i].font = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j - 1][i].previous = cell.pixel[k][j][i].previous;
+                            cell.pixel[k][j][i].previous = '.';
+                            cell.pixel[k][j][i].font = '.';
+                            cell.pixel[k][j - 1][i].enemyhealth = cell.pixel[k][j][i].enemyhealth;
+                            cell.pixel[k][j - 1][i].number = cell.pixel[k][j][i].number + 1;
+                            count++;
+                            break;
+                        } 
+                    }
+                }
+            }
+        }
+        if(count){
+            break;
+        }
+    }
+}
+
+
+
+
+//-------------------------------------------------------------------------------------------------
+
+
 //-------------------------------------------KEY----------------------------------------
+
+
+
+
+
 
 int key(int y, int x, char c, int k){
     if (cell.health <= 0){
         return 1;
     }
-    cell.health += ((cell.gorosneh - 50) * -1) / 5;
+    cell.health += ((cell.gorosneh - 50) * -1) / 25;
     if(cell.health > health){
         cell.health = health;
     }
     end_time = time(NULL);
-    if (end_time - start_time > 2){
+    if (end_time - start_time > 1){
         cell.gorosneh++;
         start_time = time(NULL);
         end_time = time(NULL);
@@ -284,8 +605,19 @@ int key(int y, int x, char c, int k){
     }
     else{
         attron(COLOR_PAIR(1));
+
     }
+
+
+
+
+    
+    int p = 0;
+
+
+
     if(c == '1'){
+        p++;
         if (cell.pixel[k][y + 1][x - 1].flag != 0 && cell.pixel[k][y + 1][x - 1].font != '|' &&
             cell.pixel[k][y + 1][x - 1].font != '-' && cell.pixel[k][y + 1][x - 1].font != 'O'){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
@@ -300,6 +632,8 @@ int key(int y, int x, char c, int k){
             }
             y = y + 1;
             x = x - 1;
+            if (cell.pixel[k][y][x].namayesh == 1)
+            Harkat(y, x - 1, k);
             attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
             attroff(COLOR_PAIR(herocolor));
@@ -307,6 +641,7 @@ int key(int y, int x, char c, int k){
         }
     }
     else if(c == '2'){
+        p++;
         if (cell.pixel[k][y + 1][x].flag != 0 && cell.pixel[k][y + 1][x].font != '|' && 
             cell.pixel[k][y + 1][x].font != '-' && cell.pixel[k][y + 1][x].font != 'O'){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
@@ -319,9 +654,10 @@ int key(int y, int x, char c, int k){
                     mahdood_room(y + 2, x, k);
                     mvprintw(1, 1, "New Room!");
             }
-            
             y = y + 1;
             x = x;
+            if (cell.pixel[k][y][x].namayesh == 1)
+            Harkat(y + 1, x, k);
             attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
             attroff(COLOR_PAIR(herocolor));
@@ -329,6 +665,7 @@ int key(int y, int x, char c, int k){
         }
     }
     else if(c == '3'){
+        p++;
         if (cell.pixel[k][y + 1][x + 1].flag != 0 && cell.pixel[k][y + 1][x + 1].font != '|' && 
             cell.pixel[k][y + 1][x + 1].font != '-' && cell.pixel[k][y + 1][x + 1].font != 'O'){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
@@ -343,6 +680,8 @@ int key(int y, int x, char c, int k){
             }
             y = y + 1;
             x = x + 1;
+            if (cell.pixel[k][y][x].namayesh == 1)
+            Harkat(y, x + 1, k);
             attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
             attroff(COLOR_PAIR(herocolor));
@@ -350,6 +689,7 @@ int key(int y, int x, char c, int k){
         }
     }
     else if(c == '4'){
+        p++;
         if (cell.pixel[k][y][x - 1].flag != 0 && cell.pixel[k][y][x - 1].font != '|' && 
             cell.pixel[k][y][x - 1].font != '-' && cell.pixel[k][y][x - 1].font != 'O'){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
@@ -364,13 +704,16 @@ int key(int y, int x, char c, int k){
             }
             y = y;
             x = x - 1;
+            if (cell.pixel[k][y][x].namayesh == 1)
+            Harkat(y, x - 1, k);
             attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
             attroff(COLOR_PAIR(herocolor));
             attron(COLOR_PAIR(1));
         }
     }
-    else if(c == '6'){
+    else if(c == '6'){ 
+        p++;
         if (cell.pixel[k][y][x + 1].flag != 0 && cell.pixel[k][y][x + 1].font != '|' && 
             cell.pixel[k][y][x + 1].font != '-' && cell.pixel[k][y][x + 1].font != 'O'){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
@@ -386,6 +729,8 @@ int key(int y, int x, char c, int k){
             
             y = y;
             x = x + 1;
+            if (cell.pixel[k][y][x].namayesh == 1)
+            Harkat(y, x + 1, k);
             attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
             attroff(COLOR_PAIR(herocolor));
@@ -393,6 +738,7 @@ int key(int y, int x, char c, int k){
         }
     }
     else if(c == '7'){
+        p++;
         if (cell.pixel[k][y - 1][x - 1].flag != 0 && cell.pixel[k][y - 1][x - 1].font != '|' && 
             cell.pixel[k][y - 1][x - 1].font != '-' && cell.pixel[k][y - 1][x - 1].font != 'O'){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
@@ -407,6 +753,8 @@ int key(int y, int x, char c, int k){
             }
             y = y - 1;
             x = x - 1;
+            if (cell.pixel[k][y][x].namayesh == 1)
+            Harkat(y, x - 1, k);
             attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
             attroff(COLOR_PAIR(herocolor));
@@ -414,6 +762,7 @@ int key(int y, int x, char c, int k){
         }
     }
     else if(c == '8'){
+        p++;
         if (cell.pixel[k][y - 1][x].flag != 0 && cell.pixel[k][y - 1][x].font != '|' && 
             cell.pixel[k][y - 1][x].font != '-' && cell.pixel[k][y - 1][x].font != 'O'){
             cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
@@ -429,6 +778,8 @@ int key(int y, int x, char c, int k){
             
             y = y - 1;
             x = x;
+            if (cell.pixel[k][y][x].namayesh == 1)
+            Harkat(y - 1, x, k);
             attron(COLOR_PAIR(herocolor));
             mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
             attroff(COLOR_PAIR(herocolor));
@@ -436,25 +787,29 @@ int key(int y, int x, char c, int k){
         }
     }
     else if(c == '9'){
+        p++;
         if (cell.pixel[k][y - 1][x + 1].flag != 0 && cell.pixel[k][y - 1][x + 1].font != '|' && 
             cell.pixel[k][y - 1][x + 1].font != '-' && cell.pixel[k][y - 1][x + 1].font != 'O'){
-            cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
-            cell.pixel[k][y - 1][x + 1].font = '@';
-            mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
-            //cell.pixel[k][y][x].namayesh = 1;
-            if (cell.pixel[k][y - 1][x + 1].previous == '+' && cell.pixel[k][y - 1][x + 1].check == 0 && 
-                cell.pixel[k][y][x].previous == '#'){
-                    cell.pixel[k][y - 1][x + 1].check = 1;
-                    mahdood_room(y - 1, x + 2, k);
-                    mvprintw(1, 1, "New Room!");
-            }
-            
-            y = y - 1;
-            x = x + 1;
-            attron(COLOR_PAIR(herocolor));
-            mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
-            attroff(COLOR_PAIR(herocolor));
-            attron(COLOR_PAIR(1));
+                cell.pixel[k][y][x].font = cell.pixel[k][y][x].previous;
+                cell.pixel[k][y - 1][x + 1].font = '@';
+                mvprintw(y, x, "%c", cell.pixel[k][y][x].previous);
+                //cell.pixel[k][y][x].namayesh = 1;
+                if (cell.pixel[k][y - 1][x + 1].previous == '+' && cell.pixel[k][y - 1][x + 1].check == 0 && 
+                    cell.pixel[k][y][x].previous == '#'){
+                        cell.pixel[k][y - 1][x + 1].check = 1;
+                        mahdood_room(y - 1, x + 2, k);
+                        -//Harkat(y - 1, x + 1, y - 1, x + 2, k);
+                        mvprintw(1, 1, "New Room!");
+                }
+                
+                y = y - 1;
+                x = x + 1;
+                if (cell.pixel[k][y][x].namayesh == 1)
+                Harkat(y, x + 1, k);
+                attron(COLOR_PAIR(herocolor));
+                mvprintw(y, x, "%c", cell.pixel[k][y][x].font);
+                attroff(COLOR_PAIR(herocolor));
+                attron(COLOR_PAIR(1));
         }
     }
     else if(c == 'S'){
@@ -717,14 +1072,70 @@ int key(int y, int x, char c, int k){
             attron(COLOR_PAIR(1));
         }
     }
+    if(p){
+        int m1 = y, n1 = x, m2 = y, n2 = x;
+        if (cell.pixel[k][y][x].previous != '+' && cell.pixel[k][y][x].font != '|' &&
+            cell.pixel[k][y][x].font != '-' && cell.pixel[k][y][x].previous != '#'){
+            for(int j = y; j < 37; j++){
+                if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+                    m2 = j;
+                    break;
+                }
+            }
+            for(int j = y; j > 0; j--){
+                if(cell.pixel[k][j][x].previous == '-' || cell.pixel[k][j][x].previous == '+'){
+                    m1 = j;
+                    break;
+                }
+            }
+            for(int i = x; i < 153; i++){
+                if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+                    n2 = i;
+                    break;
+                }
+            }
+            for(int i = x; i > 0; i--){
+                if(cell.pixel[k][y][i].previous == '|' || cell.pixel[k][y][i].previous == '+'){
+                    n1 = i;
+                    break;
+                }
+            }
+            int count = 0;
+            DFSUG('D', 5, m1, m2, n1, n2, x, y, k);
+            DFSUG('S', 20, m1, m2, n1, n2, x, y, k);
+            DFSUG('F', 10, m1, m2, n1, n2, x, y, k);
+            DFSUG('G', 15, m1, m2, n1, n2, x, y, k);
+            DFSUG('U', 25, m1, m2, n1, n2, x, y, k);
+        }
+        attron(COLOR_PAIR(1));
+        for(int j = m1; j <= m2; j++){
+            for (int i = n1; i <= n2; i++){
+                if (cell.pixel[k][j][i].font == '@'){
+                    attron(COLOR_PAIR(herocolor));
+                }
+                mvprintw(j, i, "%c", cell.pixel[k][j][i].font);
+                if (cell.pixel[k][j][i].font == '@'){
+                    attroff(COLOR_PAIR(herocolor));
+                }
+            }
+        }
+        attroff(COLOR_PAIR(1));
+    }
 //-------------------------------------------------------------------------------------- 
     
     
-    else if(c == 27) {        
+    if(c == 27) {        
        return 1;
    }
    
 //--------------------------------------------------------------------------------------
+    
+
+
+
+
+
+
 
     if(cell.pixel[k][y][x].previous == '$'){
         cell.pixel[k][y][x].previous = '.';
@@ -913,6 +1324,7 @@ int key(int y, int x, char c, int k){
     mvprintw(34, 40, "Health: %d", cell.health);
     move(37, 152);
     attroff(COLOR_PAIR(4));
+    
     key(y, x, c, k);
     return 1;
 }
@@ -1245,22 +1657,27 @@ int jadval(int ax, int bx, int ay, int by, int k){
                 if (randomi == 1){
                     cell.pixel[k][j][i].font = 'F';
                     cell.pixel[k][j][i].flag = 30;
+                    cell.pixel[k][j][i].enemyhealth = 10;
                 }
                 if (randomi == 2){
                     cell.pixel[k][j][i].font = 'D';
                     cell.pixel[k][j][i].flag = 31;
+                    cell.pixel[k][j][i].enemyhealth = 5;
                 }
                 if (randomi == 3){
                     cell.pixel[k][j][i].font = 'G';
                     cell.pixel[k][j][i].flag = 32;
+                    cell.pixel[k][j][i].enemyhealth = 15;
                 }
                 if (randomi == 4){
                     cell.pixel[k][j][i].font = 'S';
                     cell.pixel[k][j][i].flag = 33;
+                    cell.pixel[k][j][i].enemyhealth = 20;
                 }
                 if (randomi == 5){
                     cell.pixel[k][j][i].font = 'U';
                     cell.pixel[k][j][i].flag = 34;
+                    cell.pixel[k][j][i].enemyhealth = 30;
                 }
             }
         }
@@ -2455,6 +2872,8 @@ int main(){
            cell.pixel[l][j][i].font = ' ';
            cell.pixel[l][j][i].flag = 0;
            cell.pixel[l][j][i].namayesh = 0;
+           cell.pixel[l][j][i].enemyhealth = 0;
+           cell.pixel[l][j][i].number = 0;
     }
     cell.thealthy = 0, cell.tspeed = 0, cell.tdamage = 0;
     cell.tir = 0, cell.gorz = 0, cell.khanjar = 0, cell.asa = 0, cell.shamshir = 0, cell.mainfood = 0;
@@ -2539,7 +2958,9 @@ int main(){
             testkey = 1;
             Main_game(0);
             testkey = 0;
- 
+            refresh();
+            endwin();
+            return 0;
         }
         else if(number == 4){
             refresh();
